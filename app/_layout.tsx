@@ -1,24 +1,35 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
+import { Slot } from "expo-router";
+import * as Updates from "expo-updates";
+import { useEffect } from "react";
+import ToastProvider from "../components/Toast";
+import { ExpenseProvider } from "../context/ExpenseContext";
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
+export default function Layout() {
+  useEffect(() => {
+    async function checkUpdate() {
+      try {
+        // ONLY run in production build
+        if (!__DEV__) {
+          const update = await Updates.checkForUpdateAsync();
 
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
+          if (update.isAvailable) {
+            await Updates.fetchUpdateAsync();
+            await Updates.reloadAsync();
+          }
+        }
+      } catch (e) {
+        console.log("Update error:", e);
+      }
+    }
 
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
+    checkUpdate();
+  }, []);
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <ExpenseProvider>
+      <ToastProvider>
+        <Slot />
+      </ToastProvider>
+    </ExpenseProvider>
   );
 }

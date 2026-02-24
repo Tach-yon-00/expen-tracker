@@ -1,53 +1,152 @@
 /**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
+ * Yochan UI Theme
+ * Centralized design tokens for colors, spacing, and typography
  */
 
-import { Platform } from 'react-native';
+export const COLORS = {
+  // Brand (Cyan / Teal)
+  primary: "#0EA5E9", // Cyan/Light Blue from image
+  primaryLight: "#E0F2FE",
+  primaryDark: "#0284C7",
 
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
+  // Semantic
+  success: "#10B981",
+  successLight: "#D1FAE5",
+  danger: "#EF4444", // Bright red for negative transactions
+  dangerLight: "#FEE2E2",
+  warning: "#F59E0B",
+  warningLight: "#FEF3C7",
+  info: "#38BDF8",
+  infoLight: "#E0F2FE",
 
-export const Colors = {
-  light: {
-    text: '#11181C',
-    background: '#fff',
-    tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
-    tabIconSelected: tintColorLight,
+  // Neutrals (Tinted with blue)
+  white: "#FFFFFF",
+  gray50: "#F4F6F8", // Very light blue-grey for cards
+  gray100: "#E2E8F0", // Light blue-grey for borders
+  gray200: "#CBD5E1",
+  gray300: "#94A3B8",
+  gray400: "#64748B",
+  gray500: "#475569",
+  gray600: "#334155",
+  gray700: "#1E293B",
+  gray800: "#0F172A",
+  gray900: "#0B0F19",
+
+  // Application Specific
+  background: "#F4F6F8", // Overall app background from image
+  textHeader: "#0F4666", // Dark teal for titles like "Transactions"
+  textMain: "#1E293B",
+  textSecondary: "#475569",
+  textSub: "#64748B",
+  textMuted: "#94A3B8",
+};
+
+export const SPACING = {
+  xs: 4,
+  sm: 8,
+  md: 12,
+  lg: 16,
+  xl: 24,
+  xxl: 32,
+};
+
+export const TYPOGRAPHY = {
+  h1: {
+    fontSize: 26,
+    fontWeight: "800" as const,
+    color: COLORS.textHeader,
+    letterSpacing: -0.5,
   },
-  dark: {
-    text: '#ECEDEE',
-    background: '#151718',
-    tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
-    tabIconSelected: tintColorDark,
+  h2: {
+    fontSize: 20,
+    fontWeight: "700" as const,
+    color: COLORS.textHeader,
+    letterSpacing: -0.3,
+  },
+  h3: {
+    fontSize: 16,
+    fontWeight: "700" as const,
+    color: COLORS.textHeader,
+  },
+  subheader: {
+    fontSize: 12,
+    fontWeight: "600" as const,
+    color: COLORS.textSub,
+    textTransform: "uppercase" as const,
+    letterSpacing: 0.8,
+  },
+  body: {
+    fontSize: 14,
+    fontWeight: "400" as const,
+    color: COLORS.textMain,
+  },
+  bodyBold: {
+    fontSize: 14,
+    fontWeight: "600" as const,
+    color: COLORS.gray800,
+  },
+  bodySmall: {
+    fontSize: 12,
+    color: COLORS.textSecondary,
+  },
+  caption: {
+    fontSize: 12,
+    color: COLORS.textSub,
+  },
+  tiny: {
+    fontSize: 10,
+    color: COLORS.textMuted,
   },
 };
 
-export const Fonts = Platform.select({
-  ios: {
-    /** iOS `UIFontDescriptorSystemDesignDefault` */
-    sans: 'system-ui',
-    /** iOS `UIFontDescriptorSystemDesignSerif` */
-    serif: 'ui-serif',
-    /** iOS `UIFontDescriptorSystemDesignRounded` */
-    rounded: 'ui-rounded',
-    /** iOS `UIFontDescriptorSystemDesignMonospaced` */
-    mono: 'ui-monospace',
+export const SHADOWS = {
+  soft: {
+    shadowColor: "transparent",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0,
+    shadowRadius: 0,
+    elevation: 0,
   },
-  default: {
-    sans: 'normal',
-    serif: 'serif',
-    rounded: 'normal',
-    mono: 'monospace',
+  sm: {
+    shadowColor: "transparent",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0,
+    shadowRadius: 0,
+    elevation: 0,
   },
-  web: {
-    sans: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
-    serif: "Georgia, 'Times New Roman', serif",
-    rounded: "'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, 'MS PGothic', sans-serif",
-    mono: "SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
+  medium: {
+    shadowColor: "transparent",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0,
+    shadowRadius: 0,
+    elevation: 0,
   },
-});
+  md: {
+    shadowColor: "transparent",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0,
+    shadowRadius: 0,
+    elevation: 0,
+  },
+  lg: {
+    shadowColor: "transparent",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0,
+    shadowRadius: 0,
+    elevation: 0,
+  },
+  primary: {
+    shadowColor: "transparent",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0,
+    shadowRadius: 0,
+    elevation: 0,
+  },
+};
+
+export default {
+  COLORS,
+  SPACING,
+  TYPOGRAPHY,
+  SHADOWS,
+};

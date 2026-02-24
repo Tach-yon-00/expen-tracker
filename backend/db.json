@@ -1,0 +1,197 @@
+{
+  "expenses": [
+    {
+      "id": "1771842095875",
+      "amount": 10,
+      "title": "Test",
+      "category": "Food & Dining",
+      "date": "2026-02-23",
+      "payment": "UPI",
+      "notes": ""
+    },
+    {
+      "id": "1771842113781",
+      "amount": 10,
+      "title": "Test2",
+      "category": "Food & Dining",
+      "date": "2026-02-23",
+      "payment": "UPI",
+      "notes": ""
+    },
+    {
+      "id": "1771848115704",
+      "amount": 100,
+      "title": "Salary",
+      "category": "Test",
+      "date": "2026-02-23",
+      "payment": "netbanking",
+      "notes": "",
+      "type": "income",
+      "bank": "Hdfc",
+      "upiApp": "SUPERMONEY"
+    },
+    {
+      "id": "1771869252307",
+      "amount": 15,
+      "title": "Meow",
+      "category": "Gym & Fitness",
+      "date": "2026-02-23",
+      "payment": "UPI",
+      "notes": "Hell yeah ",
+      "type": "outcome"
+    }
+  ],
+  "monthlyBudget": 5000,
+  "categories": [
+    {
+      "id": "1",
+      "icon": "cafe-outline",
+      "title": "Coffee & Drinks",
+      "color": "#f97316"
+    },
+    {
+      "id": "2",
+      "icon": "fitness-outline",
+      "title": "Gym & Fitness",
+      "color": "#10b981"
+    },
+    {
+      "id": "3",
+      "icon": "paw-outline",
+      "title": "Pet Expenses",
+      "color": "#3b82f6"
+    },
+    {
+      "id": "4",
+      "icon": "fast-food-outline",
+      "title": "Food & Dining",
+      "color": "#ef4444"
+    },
+    {
+      "id": "5",
+      "icon": "car-outline",
+      "title": "Transportation",
+      "color": "#f59e0b"
+    },
+    {
+      "id": "6",
+      "icon": "bag-handle-outline",
+      "title": "Shopping",
+      "color": "#ec4899"
+    },
+    {
+      "id": "7",
+      "icon": "bulb-outline",
+      "title": "Bills & Utilities",
+      "color": "#3b82f6"
+    },
+    {
+      "id": "8",
+      "icon": "medical-outline",
+      "title": "Healthcare",
+      "color": "#22c55e"
+    },
+    {
+      "id": "9",
+      "icon": "film-outline",
+      "title": "Entertainment",
+      "color": "#8b5cf6"
+    },
+    {
+      "id": "1771841265014",
+      "icon": "cafe-outline",
+      "title": "Test",
+      "color": "#06B6D4"
+    }
+  ],
+  "paymentMethods": [
+    {
+      "id": "1",
+      "name": "UPI",
+      "icon": "📱"
+    },
+    {
+      "id": "2",
+      "name": "Credit Card",
+      "icon": "💳"
+    },
+    {
+      "id": "3",
+      "name": "Debit Card",
+      "icon": "💳"
+    },
+    {
+      "id": "4",
+      "name": "Cash",
+      "icon": "💵"
+    },
+    {
+      "id": "5",
+      "name": "Net Banking",
+      "icon": "🏦"
+    }
+  ],
+  "banks": [
+    {
+      "id": "1",
+      "name": "State Bank",
+      "icon": "🏦"
+    },
+    {
+      "id": "2",
+      "name": "HDFC Bank",
+      "icon": "🏦"
+    },
+    {
+      "id": "3",
+      "name": "ICICI Bank",
+      "icon": "🏦"
+    },
+    {
+      "id": "4",
+      "name": "Axis Bank",
+      "icon": "🏦"
+    },
+    {
+      "id": "5",
+      "name": "Kotak Bank",
+      "icon": "🏦"
+    },
+    {
+      "id": "6",
+      "name": "Yes Bank",
+      "icon": "🏦"
+    }
+  ],
+  "upiApps": [
+    {
+      "id": "1",
+      "name": "Paytm UPI",
+      "icon": "📱"
+    },
+    {
+      "id": "2",
+      "name": "Google Pay",
+      "icon": "📱"
+    },
+    {
+      "id": "3",
+      "name": "PhonePe",
+      "icon": "📱"
+    },
+    {
+      "id": "4",
+      "name": "Amazon Pay",
+      "icon": "📱"
+    }
+  ],
+  "preferences": {
+    "pushNotifications": true,
+    "budgetAlerts": true,
+    "darkMode": false
+  },
+  "user": {
+    "name": "Nigga",
+    "email": "user1234@email.com"
+  }
+}
