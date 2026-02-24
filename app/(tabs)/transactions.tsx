@@ -4,6 +4,7 @@ import { useRouter } from "expo-router";
 import { useMemo, useState } from "react";
 import {
   Alert,
+  Animated,
   Modal,
   ScrollView,
   StyleSheet,
@@ -15,6 +16,8 @@ import {
 import { showToast } from "../../components/Toast";
 import { useExpenses } from "../../context/ExpenseContext";
 import { COLORS } from "../../constants/theme";
+import { FadeInView, SlideInRow, ScalePressable, SlideUpView, FadeScaleIn, StaggeredSlideIn } from "../../components/Animations";
+import { navVisibility } from "./_layout";
 
 // ─── Dynamic Currency ─────────────────────────────────────────────────────────
 const getCurrencySymbol = (): string => {
@@ -246,295 +249,331 @@ export default function TransactionsScreen() {
   return (
     <View style={styles.container}>
       {/* ── HEADER ── */}
-      <View style={styles.header}>
-        <Text style={styles.title}>Transactions</Text>
+      <FadeInView duration={500}>
+        <View style={styles.header}>
+          <Text style={styles.title}>Transactions</Text>
 
-        <TouchableOpacity
-          style={styles.addNewBadge}
-          onPress={() => router.push("/add" as any)}
-        >
-          <Text style={styles.addNewText}>Add new</Text>
-          <Ionicons name="add" size={16} color={COLORS.textHeader} />
-        </TouchableOpacity>
-      </View>
+          <ScalePressable
+            onPress={() => router.push("/add" as any)}
+          >
+            <View style={styles.addNewBadge}>
+              <Text style={styles.addNewText}>Add new</Text>
+              <Ionicons name="add" size={16} color={COLORS.textHeader} />
+            </View>
+          </ScalePressable>
+        </View>
+      </FadeInView>
 
       {/* ── SEARCH & FILTER ── */}
-      <View style={styles.searchContainer}>
-        <TouchableOpacity style={styles.filterBtn}>
-          <Ionicons name="options-outline" size={20} color={COLORS.textHeader} />
-        </TouchableOpacity>
+      <FadeInView delay={100} duration={500}>
+        <View style={styles.searchContainer}>
+          <ScalePressable onPress={() => {}}>
+            <View style={styles.filterBtn}>
+              <Ionicons name="options-outline" size={20} color={COLORS.textHeader} />
+            </View>
+          </ScalePressable>
 
-        <View style={styles.searchInputWrapper}>
-          <TextInput
-            placeholder="Search Transactions"
-            style={styles.searchInput}
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            placeholderTextColor={COLORS.gray300}
-          />
+          <View style={styles.searchInputWrapper}>
+            <TextInput
+              placeholder="Search Transactions"
+              style={styles.searchInput}
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              placeholderTextColor={COLORS.gray300}
+            />
+          </View>
+
+          <ScalePressable onPress={() => {}}>
+            <View style={styles.searchActionBtn}>
+              <Text style={styles.searchActionText}>Search</Text>
+            </View>
+          </ScalePressable>
         </View>
-
-        <TouchableOpacity style={styles.searchActionBtn}>
-          <Text style={styles.searchActionText}>Search</Text>
-        </TouchableOpacity>
-      </View>
+      </FadeInView>
 
       {/* ── KEYWORDS ── */}
-      <View style={styles.keywordCard}>
-        <Text style={styles.keywordTitle}>Filter by category</Text>
+      <FadeInView delay={200} duration={500}>
+        <View style={styles.keywordCard}>
+          <Text style={styles.keywordTitle}>Filter by category</Text>
 
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.keywordRoll}>
-          {keywords.map((item: string) => (
-            <TouchableOpacity
-              key={item}
-              onPress={() => handleKeywordPress(item)}
-              style={[
-                styles.keywordChip,
-                selectedKeyword === item && styles.keywordChipActive
-              ]}
-            >
-              <Text style={[
-                styles.keywordText,
-                selectedKeyword === item && styles.keywordTextActive
-              ]}>
-                {item}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      </View>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.keywordRoll}>
+            {keywords.map((item: string, index: number) => (
+              <FadeScaleIn key={item} delay={250 + index * 40} duration={300}>
+                <ScalePressable onPress={() => handleKeywordPress(item)}>
+                  <View style={[
+                    styles.keywordChip,
+                    selectedKeyword === item && styles.keywordChipActive
+                  ]}>
+                    <Text style={[
+                      styles.keywordText,
+                      selectedKeyword === item && styles.keywordTextActive
+                    ]}>
+                      {item}
+                    </Text>
+                  </View>
+                </ScalePressable>
+              </FadeScaleIn>
+            ))}
+          </ScrollView>
+        </View>
+      </FadeInView>
 
       {/* ── RECENT TRANSACTIONS ── */}
-      <Text style={styles.sectionTitle}>Recent Transactions</Text>
+      <FadeInView delay={300} duration={500}>
+        <Text style={styles.sectionTitle}>Recent Transactions</Text>
+      </FadeInView>
 
-      <ScrollView
+      <Animated.ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.txList}
+        onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: navVisibility } } }], { useNativeDriver: false })}
+        scrollEventThrottle={16}
       >
         {sortedExpenses.length === 0 ? (
-          <View style={styles.emptyState}>
-            <Ionicons name={searchQuery || selectedKeyword ? "search-outline" : "receipt-outline"} size={50} color="#cbd5e1" />
-            <Text style={styles.emptyText}>
-              {searchQuery || selectedKeyword ? "No results found for your search" : "No transactions yet"}
-            </Text>
-          </View>
+          <FadeInView delay={400}>
+            <View style={styles.emptyState}>
+              <Ionicons name={searchQuery || selectedKeyword ? "search-outline" : "receipt-outline"} size={50} color="#cbd5e1" />
+              <Text style={styles.emptyText}>
+                {searchQuery || selectedKeyword ? "No results found for your search" : "No transactions yet"}
+              </Text>
+            </View>
+          </FadeInView>
         ) : (
           (() => {
             let lastDateLabel = "";
+            let itemIndex = 0;
             return sortedExpenses.map((item: any, index: number) => {
               const cfg = getCategoryConfigByName(item.category);
               const isIncome = item.type === "income";
               const dateLabel = formatDate(item.date);
               const showHeader = dateLabel !== lastDateLabel;
               lastDateLabel = dateLabel;
+              const currentItemIndex = itemIndex++;
 
               return (
                 <View key={item.id || index}>
                   {showHeader && (
-                    <Text style={{ fontSize: 13, fontWeight: "600", color: "#64748b", marginTop: 16, marginBottom: 8, paddingLeft: 4, textTransform: "uppercase", letterSpacing: 0.5 }}>
-                      {dateLabel}
-                    </Text>
+                    <FadeInView delay={350 + currentItemIndex * 50} duration={400}>
+                      <Text style={{ fontSize: 13, fontWeight: "600", color: "#64748b", marginTop: 16, marginBottom: 8, paddingLeft: 4, textTransform: "uppercase", letterSpacing: 0.5 }}>
+                        {dateLabel}
+                      </Text>
+                    </FadeInView>
                   )}
-                  <TouchableOpacity
-                    style={styles.txRow}
-                    onPress={() => setSelectedTransaction(item)}
-                    activeOpacity={0.75}
-                  >
-                    <View style={[styles.txIconContainer, { backgroundColor: cfg.bg }]}>
-                      <Ionicons name={cfg.icon} size={22} color={cfg.color} />
-                    </View>
+                  <SlideInRow delay={350 + currentItemIndex * 60}>
+                    <ScalePressable onPress={() => setSelectedTransaction(item)}>
+                      <View style={styles.txRow}>
+                        <View style={[styles.txIconContainer, { backgroundColor: cfg.bg }]}>
+                          <Ionicons name={cfg.icon} size={22} color={cfg.color} />
+                        </View>
 
-                    <View style={{ flex: 1 }}>
-                      <Text style={styles.txTitle}>
-                        {item.title || item.description || `${item.category} Expense`}
-                      </Text>
-                      <Text style={styles.txMetaRow}>
-                        {item.category || "Others"} · {formatDate(item.date)}
-                      </Text>
-                    </View>
+                        <View style={{ flex: 1 }}>
+                          <Text style={styles.txTitle}>
+                            {item.title || item.description || `${item.category} Expense`}
+                          </Text>
+                          <Text style={styles.txMetaRow}>
+                            {item.category || "Others"} · {formatDate(item.date)}
+                          </Text>
+                        </View>
 
-                    <Text style={[styles.txAmount, isIncome && { color: "#22c55e" }]}>
-                      {isIncome ? "+" : "-"}{CURRENCY}{item.amount.toFixed(2)}
-                    </Text>
-                  </TouchableOpacity>
+                        <Text style={[styles.txAmount, isIncome && { color: "#22c55e" }]}>
+                          {isIncome ? "+" : "-"}{CURRENCY}{item.amount.toFixed(2)}
+                        </Text>
+                      </View>
+                    </ScalePressable>
+                  </SlideInRow>
                 </View>
               );
             });
           })()
         )}
-      </ScrollView>
+      </Animated.ScrollView>
 
       {/* ── TRANSACTION DETAIL MODAL ──────────────────────────────────────────── */}
       <Modal
         visible={selectedTransaction !== null && !isEditing}
-        animationType="slide"
+        animationType="fade"
         transparent
         onRequestClose={() => setSelectedTransaction(null)}
       >
         <View style={styles.modalOverlay}>
-          <View style={styles.modalSheet}>
-            {selectedTransaction && (() => {
-              const cfg = getCategoryConfigByName(selectedTransaction.category);
-              const paymentInfo = getPaymentMethodDisplay(selectedTransaction.payment);
-              return (
-                <>
-                  <View style={styles.modalHandle} />
+          <SlideUpView slideDistance={60} duration={350}>
+            <View style={styles.modalSheet}>
+              {selectedTransaction && (() => {
+                const cfg = getCategoryConfigByName(selectedTransaction.category);
+                const paymentInfo = getPaymentMethodDisplay(selectedTransaction.payment);
+                return (
+                  <>
+                    <View style={styles.modalHandle} />
 
-                  <View style={styles.modalHeaderRow}>
-                    <View style={[styles.modalIconCircle, { backgroundColor: cfg.bg }]}>
-                      <Ionicons name={cfg.icon} size={36} color={cfg.color} />
+                    <View style={styles.modalHeaderRow}>
+                      <View style={[styles.modalIconCircle, { backgroundColor: cfg.bg }]}>
+                        <Ionicons name={cfg.icon} size={36} color={cfg.color} />
+                      </View>
+                      <ScalePressable onPress={() => setSelectedTransaction(null)}>
+                        <View style={styles.closeBtn}>
+                          <Ionicons name="close" size={20} color="#555" />
+                        </View>
+                      </ScalePressable>
                     </View>
-                    <TouchableOpacity style={styles.closeBtn} onPress={() => setSelectedTransaction(null)}>
-                      <Ionicons name="close" size={20} color="#555" />
-                    </TouchableOpacity>
-                  </View>
 
-                  <Text style={styles.modalTitle}>
-                    {selectedTransaction.title || selectedTransaction.description || `${selectedTransaction.category} Expense`}
-                  </Text>
-                  <Text style={styles.modalAmount}>
-                    -{CURRENCY}{selectedTransaction.amount.toFixed(2)}
-                  </Text>
+                    <Text style={styles.modalTitle}>
+                      {selectedTransaction.title || selectedTransaction.description || `${selectedTransaction.category} Expense`}
+                    </Text>
+                    <Text style={styles.modalAmount}>
+                      -{CURRENCY}{selectedTransaction.amount.toFixed(2)}
+                    </Text>
 
-                  <View style={styles.detailBox}>
-                    <Text style={styles.detailBoxTitle}>Transaction Details</Text>
-                    <View style={styles.detailGrid}>
-                      <View style={styles.detailItem}>
-                        <Text style={styles.detailLabel}>Category</Text>
-                        <Text style={styles.detailValue}>{selectedTransaction.category}</Text>
-                      </View>
-                      <View style={styles.detailItem}>
-                        <Text style={styles.detailLabel}>Date</Text>
-                        <Text style={styles.detailValue}>{formatDate(selectedTransaction.date)}</Text>
-                      </View>
-                      <View style={styles.detailItem}>
-                        <Text style={styles.detailLabel}>Payment</Text>
-                        <Text style={styles.detailValue}>
-                          {paymentInfo.name}
-                        </Text>
-                      </View>
-                      <View style={styles.detailItem}>
-                        <Text style={styles.detailLabel}>Status</Text>
-                        <Text style={[styles.detailValue, { color: "#22c55e" }]}>Completed</Text>
+                    <View style={styles.detailBox}>
+                      <Text style={styles.detailBoxTitle}>Transaction Details</Text>
+                      <View style={styles.detailGrid}>
+                        <View style={styles.detailItem}>
+                          <Text style={styles.detailLabel}>Category</Text>
+                          <Text style={styles.detailValue}>{selectedTransaction.category}</Text>
+                        </View>
+                        <View style={styles.detailItem}>
+                          <Text style={styles.detailLabel}>Date</Text>
+                          <Text style={styles.detailValue}>{formatDate(selectedTransaction.date)}</Text>
+                        </View>
+                        <View style={styles.detailItem}>
+                          <Text style={styles.detailLabel}>Payment</Text>
+                          <Text style={styles.detailValue}>
+                            {paymentInfo.name}
+                          </Text>
+                        </View>
+                        <View style={styles.detailItem}>
+                          <Text style={styles.detailLabel}>Status</Text>
+                          <Text style={[styles.detailValue, { color: "#22c55e" }]}>Completed</Text>
+                        </View>
                       </View>
                     </View>
-                  </View>
 
-                  <View style={styles.modalActions}>
-                    <TouchableOpacity style={[styles.modalBtn, { backgroundColor: "#3b82f6" }]} onPress={handleEdit}>
-                      <Ionicons name="pencil" size={18} color="#fff" />
-                      <Text style={styles.modalBtnText}>Edit</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={[styles.modalBtn, { backgroundColor: "#ef4444" }]}
-                      onPress={() => handleDelete(selectedTransaction.id)}
-                    >
-                      <Ionicons name="trash" size={18} color="#fff" />
-                      <Text style={styles.modalBtnText}>Delete</Text>
-                    </TouchableOpacity>
-                  </View>
+                    <View style={styles.modalActions}>
+                      <ScalePressable onPress={handleEdit}>
+                        <View style={[styles.modalBtn, { backgroundColor: "#3b82f6" }]}>
+                          <Ionicons name="pencil" size={18} color="#fff" />
+                          <Text style={styles.modalBtnText}>Edit</Text>
+                        </View>
+                      </ScalePressable>
+                      <ScalePressable onPress={() => handleDelete(selectedTransaction.id)}>
+                        <View style={[styles.modalBtn, { backgroundColor: "#ef4444" }]}>
+                          <Ionicons name="trash" size={18} color="#fff" />
+                          <Text style={styles.modalBtnText}>Delete</Text>
+                        </View>
+                      </ScalePressable>
+                    </View>
 
-                  <TouchableOpacity style={styles.doneBtn} onPress={() => setSelectedTransaction(null)}>
-                    <Text style={styles.doneBtnText}>Done</Text>
-                  </TouchableOpacity>
-                </>
-              );
-            })()}
-          </View>
+                    <ScalePressable onPress={() => setSelectedTransaction(null)}>
+                      <View style={styles.doneBtn}>
+                        <Text style={styles.doneBtnText}>Done</Text>
+                      </View>
+                    </ScalePressable>
+                  </>
+                );
+              })()}
+            </View>
+          </SlideUpView>
         </View>
       </Modal>
 
       {/* ── EDIT MODAL ────────────────────────────────────────────────────────── */}
       <Modal
         visible={isEditing}
-        animationType="slide"
+        animationType="fade"
         transparent
         onRequestClose={() => setIsEditing(false)}
       >
         <View style={styles.modalOverlay}>
-          <View style={styles.modalSheet}>
-            <View style={styles.modalHandle} />
+          <SlideUpView slideDistance={80} duration={400}>
+            <View style={styles.modalSheet}>
+              <View style={styles.modalHandle} />
 
-            <View style={styles.modalHeaderRow}>
-              <Text style={styles.editModalTitle}>Edit Transaction</Text>
-              <TouchableOpacity style={styles.closeBtn} onPress={() => setIsEditing(false)}>
-                <Ionicons name="close" size={20} color="#555" />
-              </TouchableOpacity>
-            </View>
-
-            <ScrollView showsVerticalScrollIndicator={false} style={{ maxHeight: 350 }}>
-              <View style={styles.inputGroup}>
-                <Text style={styles.inputLabel}>Title</Text>
-                <View style={styles.inputBox}>
-                  <TextInput
-                    style={styles.input}
-                    value={editTitle}
-                    onChangeText={setEditTitle}
-                    placeholder="Enter title"
-                    placeholderTextColor="#aaa"
-                  />
-                </View>
-              </View>
-
-              <View style={styles.inputGroup}>
-                <Text style={styles.inputLabel}>Amount</Text>
-                <View style={styles.inputBox}>
-                  <Text style={styles.inputPrefix}>{CURRENCY}</Text>
-                  <TextInput
-                    style={styles.input}
-                    value={editAmount}
-                    onChangeText={setEditAmount}
-                    keyboardType="decimal-pad"
-                    selectTextOnFocus
-                    placeholder="0.00"
-                    placeholderTextColor="#aaa"
-                  />
-                </View>
-              </View>
-
-              <View style={styles.inputGroup}>
-                <Text style={styles.inputLabel}>Category</Text>
-                {editCategory ? (
-                  <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 8, backgroundColor: "#f0fdf4", paddingHorizontal: 12, paddingVertical: 6, borderRadius: 10, alignSelf: "flex-start" }}>
-                    <Ionicons name="checkmark-circle" size={16} color="#22c55e" style={{ marginRight: 6 }} />
-                    <Text style={{ fontSize: 13, fontWeight: "600", color: "#166534" }}>Selected: {editCategory}</Text>
+              <View style={styles.modalHeaderRow}>
+                <Text style={styles.editModalTitle}>Edit Transaction</Text>
+                <ScalePressable onPress={() => setIsEditing(false)}>
+                  <View style={styles.closeBtn}>
+                    <Ionicons name="close" size={20} color="#555" />
                   </View>
-                ) : null}
-                {renderCategorySelector()}
+                </ScalePressable>
               </View>
 
-              <View style={styles.inputGroup}>
-                <Text style={styles.inputLabel}>Date</Text>
-                <View style={styles.inputBox}>
-                  <TextInput
-                    style={styles.input}
-                    value={editDate}
-                    onChangeText={setEditDate}
-                    placeholder="DD/MM/YYYY"
-                    placeholderTextColor="#aaa"
-                  />
+              <ScrollView showsVerticalScrollIndicator={false} style={{ maxHeight: 350 }}>
+                <View style={styles.inputGroup}>
+                  <Text style={styles.inputLabel}>Title</Text>
+                  <View style={styles.inputBox}>
+                    <TextInput
+                      style={styles.input}
+                      value={editTitle}
+                      onChangeText={setEditTitle}
+                      placeholder="Enter title"
+                      placeholderTextColor="#aaa"
+                    />
+                  </View>
                 </View>
-              </View>
 
-              <View style={styles.inputGroup}>
-                <Text style={styles.inputLabel}>Payment Method</Text>
-                {renderPaymentSelector()}
-              </View>
-            </ScrollView>
+                <View style={styles.inputGroup}>
+                  <Text style={styles.inputLabel}>Amount</Text>
+                  <View style={styles.inputBox}>
+                    <Text style={styles.inputPrefix}>{CURRENCY}</Text>
+                    <TextInput
+                      style={styles.input}
+                      value={editAmount}
+                      onChangeText={setEditAmount}
+                      keyboardType="decimal-pad"
+                      selectTextOnFocus
+                      placeholder="0.00"
+                      placeholderTextColor="#aaa"
+                    />
+                  </View>
+                </View>
 
-            {/* Fix: Sticky save/cancel buttons outside ScrollView */}
-            <View style={styles.modalActions}>
-              <TouchableOpacity style={[styles.modalBtn, { backgroundColor: "#9ca3af" }]} onPress={() => setIsEditing(false)}>
-                <Text style={styles.modalBtnText}>Cancel</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={[styles.modalBtn, { backgroundColor: "#22c55e" }]} onPress={() => {
-                setIsEditing(false);
-                setSelectedTransaction(null);
-              }}>
-                <Text style={styles.modalBtnText}>Save</Text>
-              </TouchableOpacity>
+                <View style={styles.inputGroup}>
+                  <Text style={styles.inputLabel}>Category</Text>
+                  {editCategory ? (
+                    <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 8, backgroundColor: "#f0fdf4", paddingHorizontal: 12, paddingVertical: 6, borderRadius: 10, alignSelf: "flex-start" }}>
+                      <Ionicons name="checkmark-circle" size={16} color="#22c55e" style={{ marginRight: 6 }} />
+                      <Text style={{ fontSize: 13, fontWeight: "600", color: "#166534" }}>Selected: {editCategory}</Text>
+                    </View>
+                  ) : null}
+                  {renderCategorySelector()}
+                </View>
+
+                <View style={styles.inputGroup}>
+                  <Text style={styles.inputLabel}>Date</Text>
+                  <View style={styles.inputBox}>
+                    <TextInput
+                      style={styles.input}
+                      value={editDate}
+                      onChangeText={setEditDate}
+                      placeholder="DD/MM/YYYY"
+                      placeholderTextColor="#aaa"
+                    />
+                  </View>
+                </View>
+
+                <View style={styles.inputGroup}>
+                  <Text style={styles.inputLabel}>Payment Method</Text>
+                  {renderPaymentSelector()}
+                </View>
+              </ScrollView>
+
+              {/* Fix: Sticky save/cancel buttons outside ScrollView with ScalePressable */}
+              <View style={styles.modalActions}>
+                <ScalePressable onPress={() => setIsEditing(false)}>
+                  <View style={[styles.modalBtn, { backgroundColor: "#9ca3af" }]}>
+                    <Text style={styles.modalBtnText}>Cancel</Text>
+                  </View>
+                </ScalePressable>
+                <ScalePressable onPress={() => {
+                  setIsEditing(false);
+                  setSelectedTransaction(null);
+                }}>
+                  <View style={[styles.modalBtn, { backgroundColor: "#22c55e" }]}>
+                    <Text style={styles.modalBtnText}>Save</Text>
+                  </View>
+                </ScalePressable>
+              </View>
             </View>
-          </View>
+          </SlideUpView>
         </View>
       </Modal>
     </View>

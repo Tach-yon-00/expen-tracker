@@ -16,6 +16,7 @@ import {
 import { showToast } from "../components/Toast";
 import { useExpenses } from "../context/ExpenseContext";
 import { isoToDisplay, displayToIso } from "../utils/config";
+import { FadeInView, SlideInRow, ScalePressable, FadeScaleIn, SlideUpView } from "../components/Animations";
 
 const fallbackConfig = { color: "#9CA3AF", icon: "ellipsis-horizontal-outline" as keyof typeof Ionicons.glyphMap, bg: "#F3F4F6" };
 
@@ -189,309 +190,328 @@ export default function AddScreen() {
   return (
     <View style={styles.container}>
       {/* HEADER */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-          <Ionicons name="chevron-back" size={24} color="#0f172a" />
-        </TouchableOpacity>
-        <Text style={styles.title}>{isEditing ? "Edit Transaction" : "Add Transaction"}</Text>
-        <View style={{ width: 40 }} />
-      </View>
+      <FadeInView duration={500}>
+        <View style={styles.header}>
+          <ScalePressable onPress={() => router.back()}>
+            <View style={styles.backBtn}>
+              <Ionicons name="chevron-back" size={24} color="#0f172a" />
+            </View>
+          </ScalePressable>
+          <Text style={styles.title}>{isEditing ? "Edit Transaction" : "Add Transaction"}</Text>
+          <View style={{ width: 40 }} />
+        </View>
+      </FadeInView>
 
-      {/* TYPE TOGGLE — Fix: Improved contrast for inactive side */}
-      <View style={styles.toggleContainer}>
-        <TouchableOpacity
-          style={[styles.toggleBtn, transactionType === "outcome" ? styles.toggleBtnActive : styles.toggleBtnInactive]}
-          onPress={() => handleTypeChange("outcome")}
-        >
-          <Ionicons
-            name="arrow-down-circle-outline"
-            size={20}
-            color={transactionType === "outcome" ? "#fff" : "#ef4444"}
-          />
-          <Text style={[styles.toggleText, transactionType === "outcome" ? styles.toggleTextActive : { color: "#ef4444" }]}>
-            Expense
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.toggleBtn, transactionType === "income" ? styles.toggleBtnActiveIncome : styles.toggleBtnInactive]}
-          onPress={() => handleTypeChange("income")}
-        >
-          <Ionicons
-            name="trending-up"
-            size={20}
-            color={transactionType === "income" ? "#fff" : "#22c55e"}
-          />
-          <Text style={[styles.toggleText, transactionType === "income" ? styles.toggleTextActive : { color: "#22c55e" }]}>
-            Income
-          </Text>
-        </TouchableOpacity>
-      </View>
+      {/* TYPE TOGGLE with animation */}
+      <FadeInView delay={100} duration={500}>
+        <View style={styles.toggleContainer}>
+          <ScalePressable onPress={() => handleTypeChange("outcome")}>
+            <View style={[styles.toggleBtn, transactionType === "outcome" ? styles.toggleBtnActive : styles.toggleBtnInactive]}>
+              <Ionicons
+                name="arrow-down-circle-outline"
+                size={20}
+                color={transactionType === "outcome" ? "#fff" : "#ef4444"}
+              />
+              <Text style={[styles.toggleText, transactionType === "outcome" ? styles.toggleTextActive : { color: "#ef4444" }]}>
+                Expense
+              </Text>
+            </View>
+          </ScalePressable>
+          <ScalePressable onPress={() => handleTypeChange("income")}>
+            <View style={[styles.toggleBtn, transactionType === "income" ? styles.toggleBtnActiveIncome : styles.toggleBtnInactive]}>
+              <Ionicons
+                name="trending-up"
+                size={20}
+                color={transactionType === "income" ? "#fff" : "#22c55e"}
+              />
+              <Text style={[styles.toggleText, transactionType === "income" ? styles.toggleTextActive : { color: "#22c55e" }]}>
+                Income
+              </Text>
+            </View>
+          </ScalePressable>
+        </View>
+      </FadeInView>
 
       <ScrollView ref={scrollRef} showsVerticalScrollIndicator={false}>
         {/* AMOUNT CARD */}
-        <View style={styles.card}>
-          <Text style={styles.cardLabel}>Amount</Text>
-          <View style={styles.amountInputContainer}>
-            <Text style={[styles.currencySymbol, transactionType === "income" && styles.currencySymbolIncome]}>
-              {CURRENCY}
-            </Text>
+        <FadeScaleIn delay={200} duration={500}>
+          <View style={styles.card}>
+            <Text style={styles.cardLabel}>Amount</Text>
+            <View style={styles.amountInputContainer}>
+              <Text style={[styles.currencySymbol, transactionType === "income" && styles.currencySymbolIncome]}>
+                {CURRENCY}
+              </Text>
+              <TextInput
+                style={[styles.amountInput, transactionType === "income" && styles.amountInputIncome]}
+                value={amount}
+                onChangeText={setAmount}
+                keyboardType="decimal-pad"
+                selectTextOnFocus
+                placeholder="0.00"
+                placeholderTextColor="#94a3b8"
+              />
+            </View>
+          </View>
+        </FadeScaleIn>
+
+        {/* TITLE CARD */}
+        <FadeScaleIn delay={300} duration={500}>
+          <View style={styles.card}>
+            <Text style={styles.cardLabel}>Title (Optional)</Text>
             <TextInput
-              style={[styles.amountInput, transactionType === "income" && styles.amountInputIncome]}
-              value={amount}
-              onChangeText={setAmount}
-              keyboardType="decimal-pad"
-              selectTextOnFocus
-              placeholder="0.00"
+              style={styles.textInput}
+              value={title}
+              onChangeText={setTitle}
+              placeholder={transactionType === "income" ? "e.g., Salary, Freelance" : "Enter title"}
               placeholderTextColor="#94a3b8"
             />
           </View>
-        </View>
-
-        {/* TITLE CARD */}
-        <View style={styles.card}>
-          <Text style={styles.cardLabel}>Title (Optional)</Text>
-          <TextInput
-            style={styles.textInput}
-            value={title}
-            onChangeText={setTitle}
-            placeholder={transactionType === "income" ? "e.g., Salary, Freelance" : "Enter title"}
-            placeholderTextColor="#94a3b8"
-          />
-        </View>
+        </FadeScaleIn>
 
         {/* INCOME SPECIFIC: Payment Received Method */}
         {transactionType === "income" && (
           <>
-            <View style={styles.card}>
-              <Text style={styles.cardLabel}>Payment Received Via</Text>
-              <View style={styles.optionsGrid}>
-                <TouchableOpacity
-                  style={[
-                    styles.optionBtn,
-                    incomePaymentMethod === "cash" && styles.optionBtnActive
-                  ]}
-                  onPress={() => setIncomePaymentMethod("cash")}
-                >
-                  <Ionicons
-                    name="cash-outline"
-                    size={18}
-                    color={incomePaymentMethod === "cash" ? "#fff" : "#22c55e"}
-                  />
-                  <Text style={[
-                    styles.optionText,
-                    incomePaymentMethod === "cash" && styles.optionTextActive
-                  ]}>
-                    Cash
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[
-                    styles.optionBtn,
-                    incomePaymentMethod === "netbanking" && styles.optionBtnActive
-                  ]}
-                  onPress={() => {
+            <FadeScaleIn delay={400} duration={500}>
+              <View style={styles.card}>
+                <Text style={styles.cardLabel}>Payment Received Via</Text>
+                <View style={styles.optionsGrid}>
+                  <ScalePressable onPress={() => setIncomePaymentMethod("cash")}>
+                    <View style={[
+                      styles.optionBtn,
+                      incomePaymentMethod === "cash" && styles.optionBtnActive
+                    ]}>
+                      <Ionicons
+                        name="cash-outline"
+                        size={18}
+                        color={incomePaymentMethod === "cash" ? "#fff" : "#22c55e"}
+                      />
+                      <Text style={[
+                        styles.optionText,
+                        incomePaymentMethod === "cash" && styles.optionTextActive
+                      ]}>
+                        Cash
+                      </Text>
+                    </View>
+                  </ScalePressable>
+                  <ScalePressable onPress={() => {
                     setIncomePaymentMethod("netbanking");
-                    // Fix: Auto-scroll to show bank picker
                     setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 300);
-                  }}
-                >
-                  <Ionicons
-                    name="card-outline"
-                    size={18}
-                    color={incomePaymentMethod === "netbanking" ? "#fff" : "#22c55e"}
-                  />
-                  <Text style={[
-                    styles.optionText,
-                    incomePaymentMethod === "netbanking" && styles.optionTextActive
-                  ]}>
-                    Net Banking
-                  </Text>
-                </TouchableOpacity>
+                  }}>
+                    <View style={[
+                      styles.optionBtn,
+                      incomePaymentMethod === "netbanking" && styles.optionBtnActive
+                    ]}>
+                      <Ionicons
+                        name="card-outline"
+                        size={18}
+                        color={incomePaymentMethod === "netbanking" ? "#fff" : "#22c55e"}
+                      />
+                      <Text style={[
+                        styles.optionText,
+                        incomePaymentMethod === "netbanking" && styles.optionTextActive
+                      ]}>
+                        Net Banking
+                      </Text>
+                    </View>
+                  </ScalePressable>
+                </View>
               </View>
-            </View>
+            </FadeScaleIn>
 
             {/* Two Separate Cards for Bank and UPI - User must select BOTH */}
             {incomePaymentMethod === "netbanking" && (
               <>
                 {/* Bank Card - Using state.banks from database */}
-                <View style={styles.card}>
-                  <Text style={styles.cardLabel}>Select Bank *</Text>
-                  <View style={styles.bankOptionsGrid}>
-                    {bankOptions.length > 0 ? (
-                      bankOptions.map((bank: string) => (
-                        <TouchableOpacity
-                          key={bank}
-                          style={[
-                            styles.bankOptionBtn,
-                            selectedBank === bank && styles.bankOptionBtnActive
-                          ]}
-                          onPress={() => setSelectedBank(bank)}
-                        >
-                          <Text style={[
-                            styles.bankOptionText,
-                            selectedBank === bank && styles.bankOptionTextActive
-                          ]}>
-                            {bank}
-                          </Text>
-                        </TouchableOpacity>
-                      ))
-                    ) : (
-                      <Text style={styles.noDataText}>No banks available. Add in Profile.</Text>
-                    )}
+                <FadeScaleIn delay={450} duration={400}>
+                  <View style={styles.card}>
+                    <Text style={styles.cardLabel}>Select Bank *</Text>
+                    <View style={styles.bankOptionsGrid}>
+                      {bankOptions.length > 0 ? (
+                        bankOptions.map((bank: string, index: number) => (
+                          <FadeScaleIn key={bank} delay={500 + index * 30} duration={250} startScale={0.9}>
+                            <ScalePressable onPress={() => setSelectedBank(bank)}>
+                              <View style={[
+                                styles.bankOptionBtn,
+                                selectedBank === bank && styles.bankOptionBtnActive
+                              ]}>
+                                <Text style={[
+                                  styles.bankOptionText,
+                                  selectedBank === bank && styles.bankOptionTextActive
+                                ]}>
+                                  {bank}
+                                </Text>
+                              </View>
+                            </ScalePressable>
+                          </FadeScaleIn>
+                        ))
+                      ) : (
+                        <Text style={styles.noDataText}>No banks available. Add in Profile.</Text>
+                      )}
+                    </View>
                   </View>
-                </View>
+                </FadeScaleIn>
 
                 {/* UPI App Card - Using state.upiApps from database */}
-                <View style={styles.card}>
-                  <Text style={styles.cardLabel}>Select UPI App *</Text>
-                  <View style={styles.bankOptionsGrid}>
-                    {upiAppOptions.length > 0 ? (
-                      upiAppOptions.map((app: string) => (
-                        <TouchableOpacity
-                          key={app}
-                          style={[
-                            styles.bankOptionBtn,
-                            selectedUpiApp === app && styles.bankOptionBtnActive
-                          ]}
-                          onPress={() => setSelectedUpiApp(app)}
-                        >
-                          <Text style={[
-                            styles.bankOptionText,
-                            selectedUpiApp === app && styles.bankOptionTextActive
-                          ]}>
-                            {app}
-                          </Text>
-                        </TouchableOpacity>
-                      ))
-                    ) : (
-                      <Text style={styles.noDataText}>No UPI apps available. Add in Profile.</Text>
-                    )}
+                <FadeScaleIn delay={500} duration={400}>
+                  <View style={styles.card}>
+                    <Text style={styles.cardLabel}>Select UPI App *</Text>
+                    <View style={styles.bankOptionsGrid}>
+                      {upiAppOptions.length > 0 ? (
+                        upiAppOptions.map((app: string, index: number) => (
+                          <FadeScaleIn key={app} delay={550 + index * 30} duration={250} startScale={0.9}>
+                            <ScalePressable onPress={() => setSelectedUpiApp(app)}>
+                              <View style={[
+                                styles.bankOptionBtn,
+                                selectedUpiApp === app && styles.bankOptionBtnActive
+                              ]}>
+                                <Text style={[
+                                  styles.bankOptionText,
+                                  selectedUpiApp === app && styles.bankOptionTextActive
+                                ]}>
+                                  {app}
+                                </Text>
+                              </View>
+                            </ScalePressable>
+                          </FadeScaleIn>
+                        ))
+                      ) : (
+                        <Text style={styles.noDataText}>No UPI apps available. Add in Profile.</Text>
+                      )}
+                    </View>
                   </View>
-                </View>
+                </FadeScaleIn>
               </>
             )}
           </>
         )}
 
         {/* CATEGORY CARD */}
-        <View style={styles.card}>
-          <Text style={styles.cardLabel}>Category</Text>
+        <FadeScaleIn delay={transactionType === "income" ? 550 : 400} duration={500}>
+          <View style={styles.card}>
+            <Text style={styles.cardLabel}>Category</Text>
 
-          {/* Category Preview */}
-          <View style={styles.categoryPreview}>
-            <View style={[styles.categoryPreviewIcon, { backgroundColor: selectedCategoryConfig.bg }]}>
-              <Ionicons name={selectedCategoryConfig.icon} size={28} color={selectedCategoryConfig.color} />
+            {/* Category Preview */}
+            <View style={styles.categoryPreview}>
+              <View style={[styles.categoryPreviewIcon, { backgroundColor: selectedCategoryConfig.bg }]}>
+                <Ionicons name={selectedCategoryConfig.icon} size={28} color={selectedCategoryConfig.color} />
+              </View>
+              <Text style={styles.categoryPreviewText}>{selectedCategory}</Text>
             </View>
-            <Text style={styles.categoryPreviewText}>{selectedCategory}</Text>
-          </View>
 
-          {/* Category Options with Icons */}
-          <View style={styles.optionsGrid}>
-            {(transactionType === "income" ? incomeCategories : categories).map((cat: string) => {
-              const cfg = getCategoryConfig(cat);
-              const isSelected = selectedCategory === cat;
-              return (
-                <TouchableOpacity
-                  key={cat}
-                  style={[
-                    styles.optionBtn,
-                    isSelected && { borderColor: cfg.color, borderWidth: 2, backgroundColor: cfg.bg }
-                  ]}
-                  onPress={() => setSelectedCategory(cat)}
-                >
-                  {isSelected && <Ionicons name="checkmark-circle" size={14} color={cfg.color} style={{ marginRight: 2 }} />}
-                  <Ionicons
-                    name={cfg.icon}
-                    size={16}
-                    color={isSelected ? cfg.color : COLORS.gray400}
-                    style={styles.categoryIcon}
-                  />
-                  <Text style={[
-                    styles.optionText,
-                    isSelected && { color: cfg.color, fontWeight: "700" }
-                  ]}>
-                    {cat}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
+            {/* Category Options with Icons */}
+            <View style={styles.optionsGrid}>
+              {(transactionType === "income" ? incomeCategories : categories).map((cat: string, index: number) => {
+                const cfg = getCategoryConfig(cat);
+                const isSelected = selectedCategory === cat;
+                return (
+                  <FadeScaleIn key={cat} delay={(transactionType === "income" ? 600 : 450) + index * 30} duration={250} startScale={0.9}>
+                    <ScalePressable onPress={() => setSelectedCategory(cat)}>
+                      <View style={[
+                        styles.optionBtn,
+                        isSelected && { borderColor: cfg.color, borderWidth: 2, backgroundColor: cfg.bg }
+                      ]}>
+                        {isSelected && <Ionicons name="checkmark-circle" size={14} color={cfg.color} style={{ marginRight: 2 }} />}
+                        <Ionicons
+                          name={cfg.icon}
+                          size={16}
+                          color={isSelected ? cfg.color : COLORS.gray400}
+                          style={styles.categoryIcon}
+                        />
+                        <Text style={[
+                          styles.optionText,
+                          isSelected && { color: cfg.color, fontWeight: "700" }
+                        ]}>
+                          {cat}
+                        </Text>
+                      </View>
+                    </ScalePressable>
+                  </FadeScaleIn>
+                );
+              })}
+            </View>
           </View>
-        </View>
+        </FadeScaleIn>
 
         {/* OUTCOME SPECIFIC: PAYMENT METHOD CARD */}
         {transactionType === "outcome" && (
-          <View style={styles.card}>
-            <TouchableOpacity
-              style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}
-              onPress={() => setShowPaymentMethod(!showPaymentMethod)}
-            >
-              <Text style={[styles.cardLabel, { marginBottom: 0 }]}>Payment Details (Optional)</Text>
-              <Ionicons name={showPaymentMethod ? "chevron-up" : "chevron-down"} size={20} color={COLORS.gray400} />
-            </TouchableOpacity>
+          <FadeScaleIn delay={550} duration={500}>
+            <View style={styles.card}>
+              <ScalePressable onPress={() => setShowPaymentMethod(!showPaymentMethod)}>
+                <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                  <Text style={[styles.cardLabel, { marginBottom: 0 }]}>Payment Details (Optional)</Text>
+                  <Ionicons name={showPaymentMethod ? "chevron-up" : "chevron-down"} size={20} color={COLORS.gray400} />
+                </View>
+              </ScalePressable>
 
-            {showPaymentMethod && (
-              <View style={[styles.optionsGrid, { marginTop: 16 }]}>
-                {paymentMethods.map((method) => (
-                  <TouchableOpacity
-                    key={method}
-                    style={[
-                      styles.optionBtn,
-                      paymentMethod === method && styles.optionBtnActive
-                    ]}
-                    onPress={() => setPaymentMethod(method)}
-                  >
-                    <Text style={[
-                      styles.optionText,
-                      paymentMethod === method && styles.optionTextActive
-                    ]}>
-                      {method}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            )}
-          </View>
+              {showPaymentMethod && (
+                <View style={[styles.optionsGrid, { marginTop: 16 }]}>
+                  {paymentMethods.map((method, index) => (
+                    <FadeScaleIn key={method} delay={600 + index * 40} duration={250} startScale={0.9}>
+                      <ScalePressable onPress={() => setPaymentMethod(method)}>
+                        <View style={[
+                          styles.optionBtn,
+                          paymentMethod === method && styles.optionBtnActive
+                        ]}>
+                          <Text style={[
+                            styles.optionText,
+                            paymentMethod === method && styles.optionTextActive
+                          ]}>
+                            {method}
+                          </Text>
+                        </View>
+                      </ScalePressable>
+                    </FadeScaleIn>
+                  ))}
+                </View>
+              )}
+            </View>
+          </FadeScaleIn>
         )}
 
-        {/* DATE CARD — Fix: Display DD/MM/YYYY format */}
-        <View style={styles.card}>
-          <Text style={styles.cardLabel}>Date</Text>
-          <TextInput
-            style={styles.textInput}
-            value={selectedDate}
-            onChangeText={setSelectedDate}
-            placeholder="DD/MM/YYYY"
-            placeholderTextColor="#94a3b8"
-          />
-        </View>
+        {/* DATE CARD */}
+        <FadeScaleIn delay={transactionType === "income" ? 600 : 650} duration={500}>
+          <View style={styles.card}>
+            <Text style={styles.cardLabel}>Date</Text>
+            <TextInput
+              style={styles.textInput}
+              value={selectedDate}
+              onChangeText={setSelectedDate}
+              placeholder="DD/MM/YYYY"
+              placeholderTextColor="#94a3b8"
+            />
+          </View>
+        </FadeScaleIn>
 
         {/* NOTES CARD */}
-        <View style={styles.card}>
-          <Text style={styles.cardLabel}>Notes (Optional)</Text>
-          <TextInput
-            style={[styles.textInput, styles.notesInput]}
-            value={notes}
-            onChangeText={setNotes}
-            placeholder="Add notes..."
-            placeholderTextColor="#94a3b8"
-            multiline
-            numberOfLines={4}
-            textAlignVertical="top"
-          />
-        </View>
+        <FadeScaleIn delay={transactionType === "income" ? 700 : 750} duration={500}>
+          <View style={styles.card}>
+            <Text style={styles.cardLabel}>Notes (Optional)</Text>
+            <TextInput
+              style={[styles.textInput, styles.notesInput]}
+              value={notes}
+              onChangeText={setNotes}
+              placeholder="Add notes..."
+              placeholderTextColor="#94a3b8"
+              multiline
+              numberOfLines={4}
+              textAlignVertical="top"
+            />
+          </View>
+        </FadeScaleIn>
 
         {/* SAVE BUTTON */}
-        <TouchableOpacity
-          style={[
-            styles.saveButton,
-            transactionType === "income" && styles.saveButtonIncome
-          ]}
-          onPress={handleSave}
-        >
-          <Text style={styles.saveButtonText}>
-            {isEditing ? "Update Transaction" : (transactionType === "income" ? "Save Income" : "Add Expense")}
-          </Text>
-        </TouchableOpacity>
+        <FadeInView delay={transactionType === "income" ? 800 : 850} duration={500}>
+          <ScalePressable onPress={handleSave}>
+            <View style={[
+              styles.saveButton,
+              transactionType === "income" && styles.saveButtonIncome
+            ]}>
+              <Text style={styles.saveButtonText}>
+                {isEditing ? "Update Transaction" : (transactionType === "income" ? "Save Income" : "Add Expense")}
+              </Text>
+            </View>
+          </ScalePressable>
+        </FadeInView>
 
         <View style={{ height: 100 }} />
       </ScrollView>

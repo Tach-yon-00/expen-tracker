@@ -12,6 +12,7 @@ import {
   View,
 } from "react-native";
 import { useExpenses } from "../context/ExpenseContext";
+import { FadeInView, SlideInRow, ScalePressable, FadeScaleIn, SlideUpView, StaggeredSlideIn } from "../components/Animations";
 
 // Popular icons for payment methods
 const PAYMENT_ICONS = [
@@ -117,151 +118,164 @@ export default function ManagePaymentMethods() {
   return (
     <View style={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity 
-          style={styles.backBtn}
-          onPress={() => router.back()}
-        >
-          <Ionicons name="chevron-back" size={24} color="#0f172a" />
-        </TouchableOpacity>
-        <Text style={styles.title}>Payment Methods</Text>
-        <View style={{ width: 40 }} />
-      </View>
+      <FadeInView duration={500}>
+        <View style={styles.header}>
+          <ScalePressable onPress={() => router.back()}>
+            <View style={styles.backBtn}>
+              <Ionicons name="chevron-back" size={24} color="#0f172a" />
+            </View>
+          </ScalePressable>
+          <Text style={styles.title}>Payment Methods</Text>
+          <View style={{ width: 40 }} />
+        </View>
+      </FadeInView>
 
       {/* Tab Bar */}
-      <View style={styles.tabBar}>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === "payment" && styles.tabActive]}
-          onPress={() => setActiveTab("payment")}
-        >
-          <Ionicons 
-            name="wallet-outline" 
-            size={18} 
-            color={activeTab === "payment" ? "#fff" : "#64748b"} 
-          />
-          <Text style={[styles.tabLabel, activeTab === "payment" && styles.tabLabelActive]}>
-            Payment
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === "bank" && styles.tabActive]}
-          onPress={() => setActiveTab("bank")}
-        >
-          <Ionicons 
-            name="business-outline" 
-            size={18} 
-            color={activeTab === "bank" ? "#fff" : "#64748b"} 
-          />
-          <Text style={[styles.tabLabel, activeTab === "bank" && styles.tabLabelActive]}>
-            Banks
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === "upi" && styles.tabActive]}
-          onPress={() => setActiveTab("upi")}
-        >
-          <Ionicons 
-            name="phone-portrait-outline" 
-            size={18} 
-            color={activeTab === "upi" ? "#fff" : "#64748b"} 
-          />
-          <Text style={[styles.tabLabel, activeTab === "upi" && styles.tabLabelActive]}>
-            UPI
-          </Text>
-        </TouchableOpacity>
-      </View>
+      <FadeInView delay={100} duration={500}>
+        <View style={styles.tabBar}>
+          <ScalePressable onPress={() => setActiveTab("payment")}>
+            <View style={[styles.tab, activeTab === "payment" && styles.tabActive]}>
+              <Ionicons 
+                name="wallet-outline" 
+                size={18} 
+                color={activeTab === "payment" ? "#fff" : "#64748b"} 
+              />
+              <Text style={[styles.tabLabel, activeTab === "payment" && styles.tabLabelActive]}>
+                Payment
+              </Text>
+            </View>
+          </ScalePressable>
+          <ScalePressable onPress={() => setActiveTab("bank")}>
+            <View style={[styles.tab, activeTab === "bank" && styles.tabActive]}>
+              <Ionicons 
+                name="business-outline" 
+                size={18} 
+                color={activeTab === "bank" ? "#fff" : "#64748b"} 
+              />
+              <Text style={[styles.tabLabel, activeTab === "bank" && styles.tabLabelActive]}>
+                Banks
+              </Text>
+            </View>
+          </ScalePressable>
+          <ScalePressable onPress={() => setActiveTab("upi")}>
+            <View style={[styles.tab, activeTab === "upi" && styles.tabActive]}>
+              <Ionicons 
+                name="phone-portrait-outline" 
+                size={18} 
+                color={activeTab === "upi" ? "#fff" : "#64748b"} 
+              />
+              <Text style={[styles.tabLabel, activeTab === "upi" && styles.tabLabelActive]}>
+                UPI
+              </Text>
+            </View>
+          </ScalePressable>
+        </View>
+      </FadeInView>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Info Card */}
-        <View style={styles.infoCard}>
-          <Ionicons name="information-circle-outline" size={20} color="#0e5f85" />
-          <Text style={styles.infoText}>
-            Manage your {getTabTitle().toLowerCase()} for faster checkout
-          </Text>
-        </View>
+        <FadeScaleIn delay={200} duration={500}>
+          <View style={styles.infoCard}>
+            <Ionicons name="information-circle-outline" size={20} color="#0e5f85" />
+            <Text style={styles.infoText}>
+              Manage your {getTabTitle().toLowerCase()} for faster checkout
+            </Text>
+          </View>
+        </FadeScaleIn>
 
         {/* Current List */}
-        <View style={styles.listSection}>
-          <View style={styles.listHeader}>
-            <Text style={styles.listTitle}>Your {getTabTitle()}</Text>
-            <Text style={styles.listCount}>{getCurrentList().length} items</Text>
-          </View>
-
-          {getCurrentList().length === 0 ? (
-            <View style={styles.emptyState}>
-              <Ionicons name="wallet-outline" size={48} color="#cbd5e1" />
-              <Text style={styles.emptyTitle}>No {getTabTitle()} yet</Text>
-              <Text style={styles.emptySub}>Tap the button below to add one</Text>
+        <FadeInView delay={300} duration={500}>
+          <View style={styles.listSection}>
+            <View style={styles.listHeader}>
+              <Text style={styles.listTitle}>Your {getTabTitle()}</Text>
+              <Text style={styles.listCount}>{getCurrentList().length} items</Text>
             </View>
-          ) : (
-            getCurrentList().map((item: any) => (
-              <View key={item.id} style={styles.itemCard}>
-                <View style={styles.itemLeft}>
-                  <View style={styles.iconCircle}>
-                    <Text style={styles.itemIcon}>{item.icon}</Text>
-                  </View>
-                  <Text style={styles.itemName}>{item.name}</Text>
-                </View>
-                <TouchableOpacity 
-                  style={styles.itemAction}
-                  onPress={() => handleDelete(activeTab, item.id, item.name)}
-                >
-                  <Ionicons name="trash-outline" size={20} color="#ef4444" />
-                </TouchableOpacity>
+
+            {getCurrentList().length === 0 ? (
+              <View style={styles.emptyState}>
+                <Ionicons name="wallet-outline" size={48} color="#cbd5e1" />
+                <Text style={styles.emptyTitle}>No {getTabTitle()} yet</Text>
+                <Text style={styles.emptySub}>Tap the button below to add one</Text>
               </View>
-            ))
-          )}
-        </View>
+            ) : (
+              getCurrentList().map((item: any, index: number) => (
+                <SlideInRow key={item.id} delay={350 + index * 60}>
+                  <View style={styles.itemCard}>
+                    <View style={styles.itemLeft}>
+                      <View style={styles.iconCircle}>
+                        <Text style={styles.itemIcon}>{item.icon}</Text>
+                      </View>
+                      <Text style={styles.itemName}>{item.name}</Text>
+                    </View>
+                    <ScalePressable onPress={() => handleDelete(activeTab, item.id, item.name)}>
+                      <View style={styles.itemAction}>
+                        <Ionicons name="trash-outline" size={20} color="#ef4444" />
+                      </View>
+                    </ScalePressable>
+                  </View>
+                </SlideInRow>
+              ))
+            )}
+          </View>
+        </FadeInView>
 
         <View style={{ height: 120 }} />
       </ScrollView>
 
       {/* Floating Add Button */}
       <View style={styles.fabContainer}>
-        <TouchableOpacity style={styles.fab} onPress={openAddModal}>
-          <Ionicons name="add" size={28} color="#fff" />
-        </TouchableOpacity>
+        <FadeInView delay={500}>
+          <ScalePressable onPress={openAddModal}>
+            <View style={styles.fab}>
+              <Ionicons name="add" size={28} color="#fff" />
+            </View>
+          </ScalePressable>
+        </FadeInView>
       </View>
 
       {/* Add Modal */}
       <Modal visible={showAddModal} transparent animationType="fade">
         <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>
-                Add {activeTab === "payment" ? "Payment Method" : activeTab === "bank" ? "Bank" : "UPI App"}
-              </Text>
-              <TouchableOpacity onPress={closeAddModal}>
-                <Ionicons name="close" size={24} color="#64748b" />
-              </TouchableOpacity>
+          <SlideUpView slideDistance={80} duration={400}>
+            <View style={styles.modalContent}>
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>
+                  Add {activeTab === "payment" ? "Payment Method" : activeTab === "bank" ? "Bank" : "UPI App"}
+                </Text>
+                <ScalePressable onPress={closeAddModal}>
+                  <Ionicons name="close" size={24} color="#64748b" />
+                </ScalePressable>
+              </View>
+
+              <Text style={styles.modalLabel}>Name</Text>
+              <TextInput
+                style={styles.modalInput}
+                value={newName}
+                onChangeText={setNewName}
+                placeholder={activeTab === "payment" ? "e.g., Credit Card" : activeTab === "bank" ? "e.g., HDFC Bank" : "e.g., Google Pay"}
+                placeholderTextColor="#94a3b8"
+              />
+
+              <Text style={styles.modalLabel}>Choose Icon</Text>
+              <View style={styles.iconGrid}>
+                {PAYMENT_ICONS.map((item, index) => (
+                  <FadeScaleIn key={item.icon} delay={100 + index * 40} duration={250} startScale={0.8}>
+                    <ScalePressable onPress={() => setNewIcon(item.icon)}>
+                      <View style={[styles.iconOption, newIcon === item.icon && styles.iconOptionActive]}>
+                        <Text style={styles.iconEmoji}>{item.icon}</Text>
+                      </View>
+                    </ScalePressable>
+                  </FadeScaleIn>
+                ))}
+              </View>
+
+              <ScalePressable onPress={handleAdd}>
+                <View style={styles.modalBtn}>
+                  <Text style={styles.modalBtnText}>Add {activeTab === "payment" ? "Payment Method" : activeTab === "bank" ? "Bank" : "UPI App"}</Text>
+                </View>
+              </ScalePressable>
             </View>
-
-            <Text style={styles.modalLabel}>Name</Text>
-            <TextInput
-              style={styles.modalInput}
-              value={newName}
-              onChangeText={setNewName}
-              placeholder={activeTab === "payment" ? "e.g., Credit Card" : activeTab === "bank" ? "e.g., HDFC Bank" : "e.g., Google Pay"}
-              placeholderTextColor="#94a3b8"
-            />
-
-            <Text style={styles.modalLabel}>Choose Icon</Text>
-            <View style={styles.iconGrid}>
-              {PAYMENT_ICONS.map((item) => (
-                <TouchableOpacity
-                  key={item.icon}
-                  style={[styles.iconOption, newIcon === item.icon && styles.iconOptionActive]}
-                  onPress={() => setNewIcon(item.icon)}
-                >
-                  <Text style={styles.iconEmoji}>{item.icon}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-
-            <TouchableOpacity style={styles.modalBtn} onPress={handleAdd}>
-              <Text style={styles.modalBtnText}>Add {activeTab === "payment" ? "Payment Method" : activeTab === "bank" ? "Bank" : "UPI App"}</Text>
-            </TouchableOpacity>
-          </View>
+          </SlideUpView>
         </View>
       </Modal>
     </View>

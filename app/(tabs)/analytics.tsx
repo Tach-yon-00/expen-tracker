@@ -25,7 +25,7 @@ import Svg, {
 import { useExpenses } from "../../context/ExpenseContext";
 import { navVisibility } from "./_layout";
 import { COLORS, TYPOGRAPHY, SHADOWS, SPACING } from "../../constants/theme";
-import { FadeInView, SlideInRow, ScalePressable } from "../../components/Animations";
+import { FadeInView, SlideInRow, ScalePressable, FadeScaleIn, SlideUpView, PulseView } from "../../components/Animations";
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
@@ -551,108 +551,129 @@ export default function AnalyticsScreen() {
       >
 
         {/* ── HEADER ── */}
-        <View style={s.header}>
-          <Text style={s.pageTitle}>Analytics</Text>
-          {/* Month navigator */}
-          <View style={s.monthNav}>
-            <ScalePressable style={s.navBtn} onPress={prevMonth}>
-              <Ionicons name="chevron-back" size={18} color={COLORS.primary} />
-            </ScalePressable>
-            <TouchableOpacity onPress={() => setShowPicker(true)}>
-              <Text style={s.monthLabel}>{MONTHS_SHORT[selectedMonth]} {selectedYear}</Text>
-            </TouchableOpacity>
-            <ScalePressable style={s.navBtn} onPress={nextMonth}>
-              <Ionicons name="chevron-forward" size={18} color={COLORS.primary} />
-            </ScalePressable>
+        <FadeInView duration={500}>
+          <View style={s.header}>
+            <Text style={s.pageTitle}>Analytics</Text>
+            {/* Month navigator */}
+            <View style={s.monthNav}>
+              <ScalePressable onPress={prevMonth}>
+                <View style={s.navBtn}>
+                  <Ionicons name="chevron-back" size={18} color={COLORS.primary} />
+                </View>
+              </ScalePressable>
+              <ScalePressable onPress={() => setShowPicker(true)}>
+                <Text style={s.monthLabel}>{MONTHS_SHORT[selectedMonth]} {selectedYear}</Text>
+              </ScalePressable>
+              <ScalePressable onPress={nextMonth}>
+                <View style={s.navBtn}>
+                  <Ionicons name="chevron-forward" size={18} color={COLORS.primary} />
+                </View>
+              </ScalePressable>
+            </View>
           </View>
-        </View>
+        </FadeInView>
 
         {/* ── TAB NAVIGATION ── */}
-        <View style={s.tabRow}>
-          {TABS.map(tab => (
-            <TouchableOpacity
-              key={tab}
-              style={[s.tab, activeTab === tab && s.tabActive]}
-              onPress={() => setActiveTab(tab)}
-              activeOpacity={0.8}
-            >
-              <Text style={[s.tabText, activeTab === tab && s.tabTextActive]}>{tab}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+        <FadeInView delay={100} duration={500}>
+          <View style={s.tabRow}>
+            {TABS.map((tab, index) => (
+              <FadeScaleIn key={tab} delay={150 + index * 60} duration={300} startScale={0.9}>
+                <ScalePressable onPress={() => setActiveTab(tab)}>
+                  <View style={[s.tab, activeTab === tab && s.tabActive]}>
+                    <Text style={[s.tabText, activeTab === tab && s.tabTextActive]}>{tab}</Text>
+                  </View>
+                </ScalePressable>
+              </FadeScaleIn>
+            ))}
+          </View>
+        </FadeInView>
 
         {/* ── NO DATA FOR THIS MONTH ── */}
         {hasNoData && (
-          <View style={s.noDataCard}>
-            <Ionicons name="analytics-outline" size={40} color="#E5E7EB" />
-            <Text style={s.noDataTitle}>No data for {MONTHS[selectedMonth]}</Text>
-            <Text style={s.noDataSub}>Start tracking expenses to see analytics here</Text>
-          </View>
+          <FadeScaleIn delay={200}>
+            <View style={s.noDataCard}>
+              <Ionicons name="analytics-outline" size={40} color="#E5E7EB" />
+              <Text style={s.noDataTitle}>No data for {MONTHS[selectedMonth]}</Text>
+              <Text style={s.noDataSub}>Start tracking expenses to see analytics here</Text>
+            </View>
+          </FadeScaleIn>
         )}
 
         {/* ── OVERVIEW TAB ── */}
         {activeTab === "Overview" && !hasNoData && (
-          <FadeInView>
-            {/* Budget Ring Card */}
-            <View style={s.card}>
-              <View style={[{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }]}>
-                <View style={{ flex: 1 }}>
-                  <Text style={s.cardTitle}>Monthly Budget</Text>
-                  <Text style={s.statCardValue}>{state.currency || "₹"}{thisMonthSpent >= 1000 ? `${(thisMonthSpent / 1000).toFixed(1)}k` : thisMonthSpent}</Text>
-                  <Text style={s.cardSub}>of {state.currency || "₹"}{currentBudget >= 1000 ? `${(currentBudget / 1000).toFixed(1)}k` : currentBudget} budget</Text>
-                  {thisMonthIncome > 0 && (
-                    <View style={{ flexDirection: "row", alignItems: "center", gap: 4, marginTop: 8 }}>
-                      <Ionicons name="arrow-up-circle" size={14} color="#22c55e" />
-                      <Text style={{ color: "#166534", fontSize: 13, fontWeight: "600" }}>Income: {state.currency || "₹"}{thisMonthIncome.toLocaleString("en-IN")}</Text>
-                    </View>
-                  )}
+          <>
+            {/* Budget Ring Card with PulseView */}
+            <FadeScaleIn delay={200}>
+              <View style={s.card}>
+                <View style={[{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }]}>
+                  <View style={{ flex: 1 }}>
+                    <Text style={s.cardTitle}>Monthly Budget</Text>
+                    <Text style={s.statCardValue}>{state.currency || "₹"}{thisMonthSpent >= 1000 ? `${(thisMonthSpent / 1000).toFixed(1)}k` : thisMonthSpent}</Text>
+                    <Text style={s.cardSub}>of {state.currency || "₹"}{currentBudget >= 1000 ? `${(currentBudget / 1000).toFixed(1)}k` : currentBudget} budget</Text>
+                    {thisMonthIncome > 0 && (
+                      <View style={{ flexDirection: "row", alignItems: "center", gap: 4, marginTop: 8 }}>
+                        <Ionicons name="arrow-up-circle" size={14} color="#22c55e" />
+                        <Text style={{ color: "#166534", fontSize: 13, fontWeight: "600" }}>Income: {state.currency || "₹"}{thisMonthIncome.toLocaleString("en-IN")}</Text>
+                      </View>
+                    )}
+                  </View>
+                  <PulseView minScale={1} maxScale={1.02} duration={3000}>
+                    <BudgetRing spent={thisMonthSpent} budget={currentBudget} />
+                  </PulseView>
                 </View>
-                <BudgetRing spent={thisMonthSpent} budget={currentBudget} />
               </View>
-            </View>
+            </FadeScaleIn>
 
             {/* DAILY ALLOWANCE — Promoted to stat card */}
             {isCurrentMonth && dailyAllowance > 0 && (
-              <View style={s.allowanceCard}>
-                <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-                  <View style={s.allowanceIcon}>
-                    <Ionicons name="wallet-outline" size={22} color={COLORS.primary} />
+              <FadeScaleIn delay={350}>
+                <View style={s.allowanceCard}>
+                  <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+                    <View style={s.allowanceIcon}>
+                      <Ionicons name="wallet-outline" size={22} color={COLORS.primary} />
+                    </View>
+                    <View>
+                      <Text style={s.allowanceLabel}>Daily Allowance</Text>
+                      <Text style={s.allowanceAmount}>₹{dailyAllowance.toFixed(0)}/day</Text>
+                    </View>
                   </View>
-                  <View>
-                    <Text style={s.allowanceLabel}>Daily Allowance</Text>
-                    <Text style={s.allowanceAmount}>₹{dailyAllowance.toFixed(0)}/day</Text>
-                  </View>
+                  <Text style={s.allowanceSub}>{daysLeft} days remaining</Text>
                 </View>
-                <Text style={s.allowanceSub}>{daysLeft} days remaining</Text>
-              </View>
+              </FadeScaleIn>
             )}
 
-            {/* KEY STATS */}
+            {/* KEY STATS with staggered animations */}
             <View style={s.statsRow}>
-              <View style={s.statCard}>
-                <Ionicons name="trending-up-outline" size={20} color={COLORS.primary} />
-                <Text style={s.statCardValue}>₹{dailyData.avg.toFixed(0)}</Text>
-                <Text style={s.statCardLabel}>Daily Avg</Text>
-              </View>
-              <View style={s.statCard}>
-                <Ionicons name="calendar-outline" size={20} color="#4ECDC4" />
-                <Text style={s.statCardValue}>{dailyData.daysWithData}</Text>
-                <Text style={s.statCardLabel}>Active Days</Text>
-              </View>
-              <View style={s.statCard}>
-                <Ionicons name="layers-outline" size={20} color="#F0A500" />
-                <Text style={s.statCardValue}>{categoryData.length}</Text>
-                <Text style={s.statCardLabel}>Categories</Text>
-              </View>
+              <FadeScaleIn delay={450} duration={400}>
+                <View style={s.statCard}>
+                  <Ionicons name="trending-up-outline" size={20} color={COLORS.primary} />
+                  <Text style={s.statCardValue}>₹{dailyData.avg.toFixed(0)}</Text>
+                  <Text style={s.statCardLabel}>Daily Avg</Text>
+                </View>
+              </FadeScaleIn>
+              <FadeScaleIn delay={550} duration={400}>
+                <View style={s.statCard}>
+                  <Ionicons name="calendar-outline" size={20} color="#4ECDC4" />
+                  <Text style={s.statCardValue}>{dailyData.daysWithData}</Text>
+                  <Text style={s.statCardLabel}>Active Days</Text>
+                </View>
+              </FadeScaleIn>
+              <FadeScaleIn delay={650} duration={400}>
+                <View style={s.statCard}>
+                  <Ionicons name="layers-outline" size={20} color="#F0A500" />
+                  <Text style={s.statCardValue}>{categoryData.length}</Text>
+                  <Text style={s.statCardLabel}>Categories</Text>
+                </View>
+              </FadeScaleIn>
             </View>
-          </FadeInView>
+          </>
         )}
 
         {/* ── TRENDS TAB ── */}
         {activeTab === "Trends" && !hasNoData && (
           <>
             {/* MONTHLY SPENDING CHART */}
-            <FadeInView delay={100}>
+            <FadeScaleIn delay={150} duration={600}>
               <View style={s.card}>
                 <View style={s.cardHeader}>
                   <Text style={s.cardTitle}>Monthly Overview</Text>
@@ -701,10 +722,10 @@ export default function AnalyticsScreen() {
                   </>
                 )}
               </View>
-            </FadeInView>
+            </FadeScaleIn>
 
             {/* DAILY TREND CHART */}
-            <FadeInView delay={200}>
+            <FadeScaleIn delay={300} duration={600}>
               <View style={s.card}>
                 <View style={s.cardHeader}>
                   <Text style={s.cardTitle}>Daily Spending</Text>
@@ -739,13 +760,13 @@ export default function AnalyticsScreen() {
                   </>
                 )}
               </View>
-            </FadeInView>
+            </FadeScaleIn>
           </>
         )}
 
         {/* ── CATEGORIES TAB ── */}
         {activeTab === "Categories" && !hasNoData && (
-          <FadeInView>
+          <FadeScaleIn delay={150} duration={600}>
             <View style={s.card}>
               <View style={s.cardHeader}>
                 <Text style={s.cardTitle}>By Category</Text>
@@ -758,13 +779,13 @@ export default function AnalyticsScreen() {
                 </View>
               ) : (
                 categoryData.map((item, i) => (
-                  <SlideInRow key={i} delay={i * 50}>
+                  <SlideInRow key={i} delay={200 + i * 60}>
                     <CategoryBar {...item} />
                   </SlideInRow>
                 ))
               )}
             </View>
-          </FadeInView>
+          </FadeScaleIn>
         )}
 
         <View style={{ height: 100 }} />
@@ -772,45 +793,52 @@ export default function AnalyticsScreen() {
 
       {/* ── MONTH PICKER MODAL ── */}
       <Modal
-        visible={showPicker} transparent animationType="slide"
+        visible={showPicker} transparent animationType="fade"
         onRequestClose={() => setShowPicker(false)}
       >
         <TouchableOpacity style={s.overlay} activeOpacity={1} onPress={() => setShowPicker(false)}>
-          <View style={s.sheet}>
-            <View style={s.sheetHandle} />
-            <View style={s.sheetHeader}>
-              <Text style={s.sheetTitle}>Select Month</Text>
-              <TouchableOpacity onPress={() => setShowPicker(false)} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-                <Ionicons name="close-circle" size={26} color="#E5E7EB" />
-              </TouchableOpacity>
+          <SlideUpView slideDistance={100} duration={400}>
+            <View style={s.sheet}>
+              <View style={s.sheetHandle} />
+              <View style={s.sheetHeader}>
+                <Text style={s.sheetTitle}>Select Month</Text>
+                <ScalePressable onPress={() => setShowPicker(false)}>
+                  <Ionicons name="close-circle" size={26} color="#E5E7EB" />
+                </ScalePressable>
+              </View>
+              {/* Year row */}
+              <View style={s.yearRow}>
+                <ScalePressable onPress={() => setSelectedYear(y => y - 1)}>
+                  <View style={s.yearBtn}>
+                    <Ionicons name="chevron-back" size={20} color="#6a5cff" />
+                  </View>
+                </ScalePressable>
+                <Text style={s.yearTxt}>{selectedYear}</Text>
+                <ScalePressable onPress={() => setSelectedYear(y => y + 1)}>
+                  <View style={s.yearBtn}>
+                    <Ionicons name="chevron-forward" size={20} color="#6a5cff" />
+                  </View>
+                </ScalePressable>
+              </View>
+              {/* Month grid with staggered animations */}
+              <View style={s.monthGrid}>
+                {MONTHS.map((m, i) => {
+                  const isActive = i === selectedMonth;
+                  return (
+                    <FadeScaleIn key={i} delay={50 + i * 25} duration={300} startScale={0.9}>
+                      <ScalePressable onPress={() => { setSelectedMonth(i); setShowPicker(false); }}>
+                        <View style={[s.monthChip, isActive && s.monthChipActive]}>
+                          <Text style={[s.monthChipTxt, isActive && s.monthChipTxtActive]}>
+                            {MONTHS_SHORT[i]}
+                          </Text>
+                        </View>
+                      </ScalePressable>
+                    </FadeScaleIn>
+                  );
+                })}
+              </View>
             </View>
-            {/* Year row */}
-            <View style={s.yearRow}>
-              <TouchableOpacity onPress={() => setSelectedYear(y => y - 1)} style={s.yearBtn}>
-                <Ionicons name="chevron-back" size={20} color="#6a5cff" />
-              </TouchableOpacity>
-              <Text style={s.yearTxt}>{selectedYear}</Text>
-              <TouchableOpacity onPress={() => setSelectedYear(y => y + 1)} style={s.yearBtn}>
-                <Ionicons name="chevron-forward" size={20} color="#6a5cff" />
-              </TouchableOpacity>
-            </View>
-            {/* Month grid */}
-            <View style={s.monthGrid}>
-              {MONTHS.map((m, i) => {
-                const isActive = i === selectedMonth;
-                return (
-                  <TouchableOpacity
-                    key={i} style={[s.monthChip, isActive && s.monthChipActive]}
-                    onPress={() => { setSelectedMonth(i); setShowPicker(false); }}
-                  >
-                    <Text style={[s.monthChipTxt, isActive && s.monthChipTxtActive]}>
-                      {MONTHS_SHORT[i]}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
-          </View>
+          </SlideUpView>
         </TouchableOpacity>
       </Modal>
     </View>

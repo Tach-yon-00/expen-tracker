@@ -22,7 +22,7 @@ import { useExpenses } from "../../context/ExpenseContext";
 import { formatDateDisplay, getContextualTagline } from "../../utils/config";
 import { navVisibility } from "./_layout";
 import { COLORS, TYPOGRAPHY, SHADOWS, SPACING } from "../../constants/theme";
-import { FadeInView, SlideInRow, ScalePressable } from "../../components/Animations";
+import { FadeInView, SlideInRow, ScalePressable, FadeScaleIn, SlideUpView, PulseView } from "../../components/Animations";
 
 const fallbackConfig = { color: "#9CA3AF", icon: "ellipsis-horizontal-outline" as keyof typeof Ionicons.glyphMap, bg: "#F3F4F6" };
 
@@ -309,15 +309,18 @@ export default function HomeScreen() {
               <Text style={styles.greeting}>{greetingText}</Text>
               <Text style={styles.subGreeting}>{taglineText}</Text>
             </View>
-            {/* Fix: + button with label */}
-            <ScalePressable style={styles.addButton} onPress={() => router.push("/add")}>
-              <Ionicons name="add" size={24} color="#fff" />
-              <Text style={styles.addButtonLabel}>Add</Text>
-            </ScalePressable>
+            {/* Fix: + button with label - enhanced with PulseView */}
+            <PulseView minScale={1} maxScale={1.03} duration={2500}>
+              <ScalePressable style={styles.addButton} onPress={() => router.push("/add")}>
+                <Ionicons name="add" size={24} color="#fff" />
+                <Text style={styles.addButtonLabel}>Add</Text>
+              </ScalePressable>
+            </PulseView>
           </View>
         </FadeInView>
 
-        <FadeInView delay={200} duration={800}>
+        {/* Main Budget Card with FadeScaleIn */}
+        <FadeScaleIn delay={200} duration={700}>
           <View style={[styles.card, { backgroundColor: '#2C1259', overflow: 'hidden' }]}>
             {/* Top Right Decorative Blob */}
             <View style={{
@@ -375,9 +378,10 @@ export default function HomeScreen() {
               <Text style={{ color: "rgba(255,255,255,0.5)", fontSize: 12 }}>{daysLeft} days left</Text>
             </View>
           </View>
-        </FadeInView>
+        </FadeScaleIn>
 
-        <FadeInView delay={400}>
+        {/* Summary Cards with staggered FadeScaleIn */}
+        <FadeScaleIn delay={350} duration={600}>
           <View style={styles.summaryRow}>
             <View style={styles.summaryCard}>
               <View style={[styles.summaryIconBox, { backgroundColor: remaining >= 0 ? COLORS.successLight : "#FEE2E2" }]}>
@@ -394,9 +398,10 @@ export default function HomeScreen() {
               <Text style={{ fontSize: 10, color: COLORS.gray400, textAlign: "center" }}>per day</Text>
             </View>
           </View>
-        </FadeInView>
+        </FadeScaleIn>
 
-        <FadeInView delay={600}>
+        {/* Donut Chart Card with FadeScaleIn */}
+        <FadeScaleIn delay={500} duration={700}>
           <View style={[styles.donutCard, { paddingHorizontal: 16 }]}>
             <Text style={[styles.donutTitle, { color: "#0F4666", marginBottom: 24 }]}>Spending by category</Text>
             <View style={styles.donutChartWrapper}>
@@ -423,99 +428,159 @@ export default function HomeScreen() {
               ))}
             </View>
           </View>
-        </FadeInView>
+        </FadeScaleIn>
 
-        <View style={styles.sectionCard}>
-          <View style={styles.sectionHeader}><Text style={styles.sectionTitle}>Recent transactions</Text><TouchableOpacity onPress={() => router.push("/transactions")}><Text style={styles.viewAll}>view all</Text></TouchableOpacity></View>
-          {state.loading ? (
-            // Fix: Skeleton loader while data loads
-            [1, 2, 3].map(i => <TransactionRowSkeleton key={i} />)
-          ) : recentExpenses.length === 0 ? (
-            <View style={styles.emptyState}><Ionicons name="receipt-outline" size={40} color={COLORS.gray300} /><Text style={styles.emptyText}>No transactions yet</Text><Text style={styles.emptySubtext}>Add your first expense to see it here</Text></View>
-          ) : (
-            recentExpenses.map((item: any, index: number) => {
-              const cfg = getCategoryConfigByName(item.category);
-              const isIncome = item.type === "income";
-              return (
-                <SlideInRow key={index} delay={700 + index * 100}>
-                  <TouchableOpacity style={styles.txRow} onPress={() => setSelectedTransaction(item)} activeOpacity={0.75}>
-                    <View style={[styles.txIconBox, { backgroundColor: cfg.bg }]}><Ionicons name={cfg.icon} size={22} color={cfg.color} /></View>
-                    <View style={styles.txInfo}><Text style={styles.txName} numberOfLines={1}>{item.title || item.description || `${item.category} Expense`}</Text>
-                      <View style={styles.txMeta}><View style={[styles.txBadge, { backgroundColor: cfg.bg }]}><Text style={[styles.txBadgeText, { color: cfg.color }]}>{item.category}</Text></View><Text style={styles.txDate}>{formatDateDisplay(item.date)}</Text></View>
-                    </View>
-                    <Text style={[styles.txAmount, isIncome && { color: COLORS.success }]}>{isIncome ? "+" : "-"}{CURRENCY}{item.amount.toFixed(2)}</Text>
-                  </TouchableOpacity>
-                </SlideInRow>
-              );
-            })
-          )}
-        </View>
+        {/* Recent Transactions with FadeInView */}
+        <FadeInView delay={650} duration={600}>
+          <View style={styles.sectionCard}>
+            <View style={styles.sectionHeader}><Text style={styles.sectionTitle}>Recent transactions</Text><ScalePressable onPress={() => router.push("/transactions")}><Text style={styles.viewAll}>view all</Text></ScalePressable></View>
+            {state.loading ? (
+              // Fix: Skeleton loader while data loads
+              [1, 2, 3].map(i => <TransactionRowSkeleton key={i} />)
+            ) : recentExpenses.length === 0 ? (
+              <View style={styles.emptyState}><Ionicons name="receipt-outline" size={40} color={COLORS.gray300} /><Text style={styles.emptyText}>No transactions yet</Text><Text style={styles.emptySubtext}>Add your first expense to see it here</Text></View>
+            ) : (
+              recentExpenses.map((item: any, index: number) => {
+                const cfg = getCategoryConfigByName(item.category);
+                const isIncome = item.type === "income";
+                return (
+                  <SlideInRow key={index} delay={750 + index * 80}>
+                    <ScalePressable onPress={() => setSelectedTransaction(item)}>
+                      <View style={styles.txRow}>
+                        <View style={[styles.txIconBox, { backgroundColor: cfg.bg }]}><Ionicons name={cfg.icon} size={22} color={cfg.color} /></View>
+                        <View style={styles.txInfo}><Text style={styles.txName} numberOfLines={1}>{item.title || item.description || `${item.category} Expense`}</Text>
+                          <View style={styles.txMeta}><View style={[styles.txBadge, { backgroundColor: cfg.bg }]}><Text style={[styles.txBadgeText, { color: cfg.color }]}>{item.category}</Text></View><Text style={styles.txDate}>{formatDateDisplay(item.date)}</Text></View>
+                        </View>
+                        <Text style={[styles.txAmount, isIncome && { color: COLORS.success }]}>{isIncome ? "+" : "-"}{CURRENCY}{item.amount.toFixed(2)}</Text>
+                      </View>
+                    </ScalePressable>
+                  </SlideInRow>
+                );
+              })
+            )}
+          </View>
+        </FadeInView>
       </Animated.ScrollView>
 
-      {/* BUDGET EDIT MODAL */}
-      <Modal visible={budgetModalVisible} animationType="slide" transparent onRequestClose={() => setBudgetModalVisible(false)}>
-        <View style={styles.modalOverlay}><View style={styles.modalSheet}>
-          <View style={styles.modalHandle} />
-          <View style={styles.modalHeaderRow}>
-            <Text style={styles.editModalTitle}>Edit Monthly Budget</Text>
-            <TouchableOpacity style={styles.closeBtn} onPress={() => setBudgetModalVisible(false)}>
-              <Ionicons name="close" size={20} color="#555" />
-            </TouchableOpacity>
-          </View>
-          <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>Monthly Budget</Text>
-            <View style={styles.inputBox}>
-              <Text style={styles.inputPrefix}>{CURRENCY}</Text>
-              <TextInput
-                style={styles.input}
-                value={newBudgetValue}
-                onChangeText={setNewBudgetValue}
-                keyboardType="decimal-pad"
-                selectTextOnFocus
-                placeholder="Enter budget amount"
-                placeholderTextColor="#aaa"
-              />
+      {/* BUDGET EDIT MODAL with SlideUpView */}
+      <Modal visible={budgetModalVisible} animationType="fade" transparent onRequestClose={() => setBudgetModalVisible(false)}>
+        <View style={styles.modalOverlay}>
+          <SlideUpView slideDistance={80} duration={400}>
+            <View style={styles.modalSheet}>
+              <View style={styles.modalHandle} />
+              <View style={styles.modalHeaderRow}>
+                <Text style={styles.editModalTitle}>Edit Monthly Budget</Text>
+                <ScalePressable onPress={() => setBudgetModalVisible(false)}>
+                  <View style={styles.closeBtn}>
+                    <Ionicons name="close" size={20} color="#555" />
+                  </View>
+                </ScalePressable>
+              </View>
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>Monthly Budget</Text>
+                <View style={styles.inputBox}>
+                  <Text style={styles.inputPrefix}>{CURRENCY}</Text>
+                  <TextInput
+                    style={styles.input}
+                    value={newBudgetValue}
+                    onChangeText={setNewBudgetValue}
+                    keyboardType="decimal-pad"
+                    selectTextOnFocus
+                    placeholder="Enter budget amount"
+                    placeholderTextColor="#aaa"
+                  />
+                </View>
+              </View>
+              <ScalePressable onPress={handleBudgetSave}>
+                <View style={[styles.doneBtn, { backgroundColor: "#22c55e" }]}>
+                  <Text style={styles.doneBtnText}>Save Budget</Text>
+                </View>
+              </ScalePressable>
             </View>
-          </View>
-          <TouchableOpacity style={[styles.doneBtn, { backgroundColor: "#22c55e" }]} onPress={handleBudgetSave}>
-            <Text style={styles.doneBtnText}>Save Budget</Text>
-          </TouchableOpacity>
-        </View></View>
+          </SlideUpView>
+        </View>
       </Modal>
 
-      {/* TRANSACTION DETAIL MODAL */}
-      <Modal visible={selectedTransaction !== null && !isEditing} animationType="slide" transparent onRequestClose={() => setSelectedTransaction(null)}>
-        <View style={styles.modalOverlay}><View style={styles.modalSheet}>
-          {selectedTransaction && (() => {
-            const cfg = getCategoryConfigByName(selectedTransaction.category); return (
-              <><View style={styles.modalHandle} /><View style={styles.modalHeaderRow}><View style={[styles.modalIconCircle, { backgroundColor: cfg.bg }]}><Ionicons name={cfg.icon} size={36} color={cfg.color} /></View><TouchableOpacity style={styles.closeBtn} onPress={() => setSelectedTransaction(null)}><Ionicons name="close" size={20} color="#555" /></TouchableOpacity></View>
-                <Text style={styles.modalTitle}>{selectedTransaction.title || selectedTransaction.description || `${selectedTransaction.category} Expense`}</Text><Text style={styles.modalAmount}>-{CURRENCY}{selectedTransaction.amount.toFixed(2)}</Text>
-                <View style={styles.detailBox}><Text style={styles.detailBoxTitle}>Transaction Details</Text><View style={styles.detailGrid}><View style={styles.detailItem}><Text style={styles.detailLabel}>Category</Text><Text style={styles.detailValue}>{selectedTransaction.category}</Text></View><View style={styles.detailItem}><Text style={styles.detailLabel}>Date</Text><Text style={styles.detailValue}>{formatDateDisplay(selectedTransaction.date)}</Text></View><View style={styles.detailItem}><Text style={styles.detailLabel}>Payment</Text><Text style={styles.detailValue}>{selectedTransaction.payment || "UPI"}</Text></View><View style={styles.detailItem}><Text style={styles.detailLabel}>Status</Text><Text style={[styles.detailValue, { color: "#22c55e" }]}>Completed</Text></View></View></View>
-                <View style={styles.modalActions}><TouchableOpacity style={[styles.modalBtn, { backgroundColor: "#3b82f6" }]} onPress={handleEdit}><Ionicons name="pencil" size={18} color="#fff" /><Text style={styles.modalBtnText}>Edit</Text></TouchableOpacity><TouchableOpacity style={[styles.modalBtn, { backgroundColor: "#ef4444" }]} onPress={() => handleDelete(selectedTransaction.id)}><Ionicons name="trash" size={18} color="#fff" /><Text style={styles.modalBtnText}>Delete</Text></TouchableOpacity></View>
-                <TouchableOpacity style={styles.doneBtn} onPress={() => setSelectedTransaction(null)}><Text style={styles.doneBtnText}>Done</Text></TouchableOpacity></>
-            );
-          })()}
-        </View></View>
+      {/* TRANSACTION DETAIL MODAL with SlideUpView */}
+      <Modal visible={selectedTransaction !== null && !isEditing} animationType="fade" transparent onRequestClose={() => setSelectedTransaction(null)}>
+        <View style={styles.modalOverlay}>
+          <SlideUpView slideDistance={60} duration={350}>
+            <View style={styles.modalSheet}>
+              {selectedTransaction && (() => {
+                const cfg = getCategoryConfigByName(selectedTransaction.category); return (
+                  <><View style={styles.modalHandle} /><View style={styles.modalHeaderRow}><View style={[styles.modalIconCircle, { backgroundColor: cfg.bg }]}><Ionicons name={cfg.icon} size={36} color={cfg.color} /></View>
+                    <ScalePressable onPress={() => setSelectedTransaction(null)}>
+                      <View style={styles.closeBtn}>
+                        <Ionicons name="close" size={20} color="#555" />
+                      </View>
+                    </ScalePressable>
+                  </View>
+                    <Text style={styles.modalTitle}>{selectedTransaction.title || selectedTransaction.description || `${selectedTransaction.category} Expense`}</Text><Text style={styles.modalAmount}>-{CURRENCY}{selectedTransaction.amount.toFixed(2)}</Text>
+                    <View style={styles.detailBox}><Text style={styles.detailBoxTitle}>Transaction Details</Text><View style={styles.detailGrid}><View style={styles.detailItem}><Text style={styles.detailLabel}>Category</Text><Text style={styles.detailValue}>{selectedTransaction.category}</Text></View><View style={styles.detailItem}><Text style={styles.detailLabel}>Date</Text><Text style={styles.detailValue}>{formatDateDisplay(selectedTransaction.date)}</Text></View><View style={styles.detailItem}><Text style={styles.detailLabel}>Payment</Text><Text style={styles.detailValue}>{selectedTransaction.payment || "UPI"}</Text></View><View style={styles.detailItem}><Text style={styles.detailLabel}>Status</Text><Text style={[styles.detailValue, { color: "#22c55e" }]}>Completed</Text></View></View></View>
+                    <View style={styles.modalActions}>
+                      <ScalePressable onPress={handleEdit}>
+                        <View style={[styles.modalBtn, { backgroundColor: "#3b82f6" }]}>
+                          <Ionicons name="pencil" size={18} color="#fff" /><Text style={styles.modalBtnText}>Edit</Text>
+                        </View>
+                      </ScalePressable>
+                      <ScalePressable onPress={() => handleDelete(selectedTransaction.id)}>
+                        <View style={[styles.modalBtn, { backgroundColor: "#ef4444" }]}>
+                          <Ionicons name="trash" size={18} color="#fff" /><Text style={styles.modalBtnText}>Delete</Text>
+                        </View>
+                      </ScalePressable>
+                    </View>
+                    <ScalePressable onPress={() => setSelectedTransaction(null)}>
+                      <View style={styles.doneBtn}>
+                        <Text style={styles.doneBtnText}>Done</Text>
+                      </View>
+                    </ScalePressable></>
+                );
+              })()}
+            </View>
+          </SlideUpView>
+        </View>
       </Modal>
 
-      {/* EDIT MODAL */}
-      <Modal visible={isEditing} animationType="slide" transparent onRequestClose={() => setIsEditing(false)}>
-        <View style={styles.modalOverlay}><View style={styles.modalSheet}>
-          <View style={styles.modalHandle} />
-          <View style={styles.modalHeaderRow}><Text style={styles.editModalTitle}>Edit Transaction</Text><TouchableOpacity style={styles.closeBtn} onPress={() => setIsEditing(false)}><Ionicons name="close" size={20} color="#555" /></TouchableOpacity></View>
-          <ScrollView showsVerticalScrollIndicator={false} style={{ maxHeight: 400 }}>
-            <View style={styles.inputGroup}><Text style={styles.inputLabel}>Title</Text><View style={styles.inputBox}><TextInput style={styles.input} value={editTitle} onChangeText={setEditTitle} placeholder="Enter title" placeholderTextColor="#aaa" /></View></View>
-            <View style={styles.inputGroup}><Text style={styles.inputLabel}>Amount</Text><View style={styles.inputBox}><Text style={styles.inputPrefix}>{CURRENCY}</Text><TextInput style={styles.input} value={editAmount} onChangeText={setEditAmount} keyboardType="decimal-pad" selectTextOnFocus placeholder="0.00" placeholderTextColor="#aaa" /></View></View>
-            <View style={styles.inputGroup}><Text style={styles.inputLabel}>Category</Text>
-              {editCategory ? (<View style={{ flexDirection: "row", alignItems: "center", marginBottom: 8, backgroundColor: "#f0fdf4", paddingHorizontal: 12, paddingVertical: 6, borderRadius: 10, alignSelf: "flex-start" }}><Ionicons name="checkmark-circle" size={16} color="#22c55e" style={{ marginRight: 6 }} /><Text style={{ fontSize: 13, fontWeight: "600", color: "#166534" }}>Selected: {editCategory}</Text></View>) : null}
-              {renderCategorySelector()}</View>
-            {/* Fix: Date label — no format hint */}
-            <View style={styles.inputGroup}><Text style={styles.inputLabel}>Date</Text><View style={styles.inputBox}><TextInput style={styles.input} value={editDate} onChangeText={setEditDate} placeholder="DD/MM/YYYY" placeholderTextColor="#aaa" /></View></View>
-            <View style={styles.inputGroup}><Text style={styles.inputLabel}>Payment Method</Text>{renderPaymentSelector()}</View>
-          </ScrollView>
-          {/* Fix: Sticky save button */}
-          <View style={styles.modalActions}><TouchableOpacity style={[styles.modalBtn, { backgroundColor: "#9ca3af" }]} onPress={() => setIsEditing(false)}><Text style={styles.modalBtnText}>Cancel</Text></TouchableOpacity><TouchableOpacity style={[styles.modalBtn, { backgroundColor: "#22c55e" }]} onPress={saveEdit}><Text style={styles.modalBtnText}>Save</Text></TouchableOpacity></View>
-        </View></View>
+      {/* EDIT MODAL with SlideUpView */}
+      <Modal visible={isEditing} animationType="fade" transparent onRequestClose={() => setIsEditing(false)}>
+        <View style={styles.modalOverlay}>
+          <SlideUpView slideDistance={80} duration={400}>
+            <View style={styles.modalSheet}>
+              <View style={styles.modalHandle} />
+              <View style={styles.modalHeaderRow}>
+                <Text style={styles.editModalTitle}>Edit Transaction</Text>
+                <ScalePressable onPress={() => setIsEditing(false)}>
+                  <View style={styles.closeBtn}>
+                    <Ionicons name="close" size={20} color="#555" />
+                  </View>
+                </ScalePressable>
+              </View>
+              <ScrollView showsVerticalScrollIndicator={false} style={{ maxHeight: 400 }}>
+                <View style={styles.inputGroup}><Text style={styles.inputLabel}>Title</Text><View style={styles.inputBox}><TextInput style={styles.input} value={editTitle} onChangeText={setEditTitle} placeholder="Enter title" placeholderTextColor="#aaa" /></View></View>
+                <View style={styles.inputGroup}><Text style={styles.inputLabel}>Amount</Text><View style={styles.inputBox}><Text style={styles.inputPrefix}>{CURRENCY}</Text><TextInput style={styles.input} value={editAmount} onChangeText={setEditAmount} keyboardType="decimal-pad" selectTextOnFocus placeholder="0.00" placeholderTextColor="#aaa" /></View></View>
+                <View style={styles.inputGroup}><Text style={styles.inputLabel}>Category</Text>
+                  {editCategory ? (<View style={{ flexDirection: "row", alignItems: "center", marginBottom: 8, backgroundColor: "#f0fdf4", paddingHorizontal: 12, paddingVertical: 6, borderRadius: 10, alignSelf: "flex-start" }}><Ionicons name="checkmark-circle" size={16} color="#22c55e" style={{ marginRight: 6 }} /><Text style={{ fontSize: 13, fontWeight: "600", color: "#166534" }}>Selected: {editCategory}</Text></View>) : null}
+                  {renderCategorySelector()}</View>
+                {/* Fix: Date label — no format hint */}
+                <View style={styles.inputGroup}><Text style={styles.inputLabel}>Date</Text><View style={styles.inputBox}><TextInput style={styles.input} value={editDate} onChangeText={setEditDate} placeholder="DD/MM/YYYY" placeholderTextColor="#aaa" /></View></View>
+                <View style={styles.inputGroup}><Text style={styles.inputLabel}>Payment Method</Text>{renderPaymentSelector()}</View>
+              </ScrollView>
+              {/* Fix: Sticky save button with ScalePressable */}
+              <View style={styles.modalActions}>
+                <ScalePressable onPress={() => setIsEditing(false)}>
+                  <View style={[styles.modalBtn, { backgroundColor: "#9ca3af" }]}>
+                    <Text style={styles.modalBtnText}>Cancel</Text>
+                  </View>
+                </ScalePressable>
+                <ScalePressable onPress={saveEdit}>
+                  <View style={[styles.modalBtn, { backgroundColor: "#22c55e" }]}>
+                    <Text style={styles.modalBtnText}>Save</Text>
+                  </View>
+                </ScalePressable>
+              </View>
+            </View>
+          </SlideUpView>
+        </View>
       </Modal>
     </>
   );

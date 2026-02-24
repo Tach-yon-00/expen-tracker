@@ -21,7 +21,7 @@ import { useAppUsage } from "../../hooks/useAppUsage";
 import { AppUsage, loadAppUsage, loadProfilePic, saveProfilePic } from "../../storage/storage";
 import { navVisibility } from "./_layout";
 import { COLORS, TYPOGRAPHY, SHADOWS, SPACING } from "../../constants/theme";
-import { FadeInView, SlideInRow, ScalePressable } from "../../components/Animations";
+import { FadeInView, SlideInRow, ScalePressable, FadeScaleIn, SlideUpView, StaggeredFadeIn } from "../../components/Animations";
 
 type Category = {
   id: string;
@@ -313,108 +313,123 @@ export default function Profile() {
         <View style={styles.header} />
 
         {/* CONTENT */}
-        <FadeInView style={styles.content}>
-          <ScalePressable onPress={handlePickImage} style={styles.avatarContainer}>
-            <Image
-              source={{ uri: profilePic || "https://i.pravatar.cc/150?img=12" }}
-              style={styles.avatar}
-            />
-            <View style={styles.editButton}>
-              <Ionicons name="camera" size={14} color="#fff" />
+        <FadeScaleIn style={styles.content} duration={600}>
+          <ScalePressable onPress={handlePickImage}>
+            <View style={styles.avatarContainer}>
+              <Image
+                source={{ uri: profilePic || "https://i.pravatar.cc/150?img=12" }}
+                style={styles.avatar}
+              />
+              <View style={styles.editButton}>
+                <Ionicons name="camera" size={14} color="#fff" />
+              </View>
             </View>
           </ScalePressable>
           <Text style={{ fontSize: 12, color: COLORS.gray400, marginTop: 8, marginBottom: -4 }}>Tap to change</Text>
 
           <View style={styles.nameContainer}>
-            <TouchableOpacity onPress={handleEditName} style={styles.nameRow}>
-              <Text style={styles.name}>{userName}</Text>
-              <Ionicons name="pencil" size={16} color={COLORS.primary} style={{ marginLeft: 8 }} />
-            </TouchableOpacity>
+            <ScalePressable onPress={handleEditName}>
+              <View style={styles.nameRow}>
+                <Text style={styles.name}>{userName}</Text>
+                <Ionicons name="pencil" size={16} color={COLORS.primary} style={{ marginLeft: 8 }} />
+              </View>
+            </ScalePressable>
           </View>
 
           <View style={styles.emailContainer}>
-            <TouchableOpacity onPress={handleEditEmail} style={styles.emailRow}>
-              <Text style={styles.email}>{userEmail}</Text>
-              <Ionicons name="mail-outline" size={16} color={COLORS.gray400} style={{ marginLeft: 6 }} />
-            </TouchableOpacity>
+            <ScalePressable onPress={handleEditEmail}>
+              <View style={styles.emailRow}>
+                <Text style={styles.email}>{userEmail}</Text>
+                <Ionicons name="mail-outline" size={16} color={COLORS.gray400} style={{ marginLeft: 6 }} />
+              </View>
+            </ScalePressable>
           </View>
-        </FadeInView>
+        </FadeScaleIn>
 
         {/* PREMIUM */}
-        <FadeInView delay={200} style={styles.premiumCard}>
-          <Text style={styles.plan}>★ PREMIUM PLAN</Text>
-          <View style={styles.rowBetween}>
-            <View>
-              <Text style={styles.premiumTitle}>Go Premium</Text>
-              <Text style={styles.premiumSub}>Unlock advanced analytics and reports</Text>
+        <FadeScaleIn delay={200} duration={600}>
+          <View style={styles.premiumCard}>
+            <Text style={styles.plan}>★ PREMIUM PLAN</Text>
+            <View style={styles.rowBetween}>
+              <View>
+                <Text style={styles.premiumTitle}>Go Premium</Text>
+                <Text style={styles.premiumSub}>Unlock advanced analytics and reports</Text>
+              </View>
+              <ScalePressable onPress={() => {}}>
+                <View style={styles.upgradeBtn}>
+                  <Text style={styles.upgradeText}>Upgrade</Text>
+                </View>
+              </ScalePressable>
             </View>
-            <TouchableOpacity style={styles.upgradeBtn}>
-              <Text style={styles.upgradeText}>Upgrade</Text>
-            </TouchableOpacity>
           </View>
-        </FadeInView>
+        </FadeScaleIn>
 
         {/* APP USAGE CHART - Hidden temporarily due to inaccurate tracking */}
 
         {/* CATEGORIES */}
-        <FadeInView delay={400}>
+        <FadeScaleIn delay={350} duration={500}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>CATEGORIES</Text>
-            <TouchableOpacity style={styles.plusBtn} onPress={() => setShowCategoryModal(true)}>
-              <Ionicons name="add" size={20} color="#fff" />
-            </TouchableOpacity>
+            <ScalePressable onPress={() => setShowCategoryModal(true)}>
+              <View style={styles.plusBtn}>
+                <Ionicons name="add" size={20} color="#fff" />
+              </View>
+            </ScalePressable>
           </View>
 
           <View style={styles.card}>
             {state.categories.length === 0 ? (
               <Text style={styles.emptyText}>No categories yet. Tap + to add one.</Text>
             ) : (
-              state.categories.map((item: any) => {
+              state.categories.map((item: any, index: number) => {
                 const isDefault = DEFAULT_CATEGORIES.includes(item.title);
                 return (
-                  <View key={item.id} style={styles.categoryRow}>
-                    <View style={[styles.categoryIcon, { backgroundColor: item.color }]}>
-                      <Ionicons name={item.icon as any} size={20} color="#fff" />
-                    </View>
-                    <View style={{ flex: 1 }}>
-                      <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-                        <Text style={styles.catTitle}>{item.title}</Text>
-                        {isDefault && (
-                          <View style={{ backgroundColor: COLORS.primaryLight, paddingHorizontal: 6, paddingVertical: 2, borderRadius: 6 }}>
-                            <Text style={{ fontSize: 9, fontWeight: "700", color: COLORS.primary }}>DEFAULT</Text>
-                          </View>
-                        )}
+                  <SlideInRow key={item.id} delay={400 + index * 50}>
+                    <View style={styles.categoryRow}>
+                      <View style={[styles.categoryIcon, { backgroundColor: item.color }]}>
+                        <Ionicons name={item.icon as any} size={20} color="#fff" />
                       </View>
-                      <Text style={styles.catSub}>Category</Text>
+                      <View style={{ flex: 1 }}>
+                        <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+                          <Text style={styles.catTitle}>{item.title}</Text>
+                          {isDefault && (
+                            <View style={{ backgroundColor: COLORS.primaryLight, paddingHorizontal: 6, paddingVertical: 2, borderRadius: 6 }}>
+                              <Text style={{ fontSize: 9, fontWeight: "700", color: COLORS.primary }}>DEFAULT</Text>
+                            </View>
+                          )}
+                        </View>
+                        <Text style={styles.catSub}>Category</Text>
+                      </View>
+                      <ScalePressable onPress={() => handleDeleteCategory(item.id, item.title)}>
+                        <View style={[styles.deleteBtn, { opacity: isDefault ? 0.3 : 1 }]}>
+                          <Ionicons name={isDefault ? "lock-closed" : "trash-outline"} size={20} color={isDefault ? COLORS.gray400 : COLORS.danger} />
+                        </View>
+                      </ScalePressable>
                     </View>
-                    <TouchableOpacity
-                      style={[styles.deleteBtn, { opacity: isDefault ? 0.3 : 1 }]}
-                      onPress={() => handleDeleteCategory(item.id, item.title)}
-                    >
-                      <Ionicons name={isDefault ? "lock-closed" : "trash-outline"} size={20} color={isDefault ? COLORS.gray400 : COLORS.danger} />
-                    </TouchableOpacity>
-                  </View>
+                  </SlideInRow>
                 );
               })
             )}
           </View>
-        </FadeInView>
+        </FadeScaleIn>
 
         {/* SETTINGS */}
-        <FadeInView delay={450}>
+        <FadeScaleIn delay={450} duration={500}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>SETTINGS</Text>
           </View>
           <View style={styles.card}>
             {/* Currency */}
-            <TouchableOpacity style={styles.securityRow} onPress={() => setShowCurrencyModal(true)}>
-              <View style={[styles.settingIcon, { backgroundColor: COLORS.primaryLight }]}>
-                <Ionicons name="cash-outline" size={20} color={COLORS.primary} />
+            <ScalePressable onPress={() => setShowCurrencyModal(true)}>
+              <View style={styles.securityRow}>
+                <View style={[styles.settingIcon, { backgroundColor: COLORS.primaryLight }]}>
+                  <Ionicons name="cash-outline" size={20} color={COLORS.primary} />
+                </View>
+                <Text style={styles.securityText}>Currency</Text>
+                <Text style={styles.settingValue}>{state.currency}</Text>
+                <Ionicons name="chevron-forward" size={18} color={COLORS.gray300} style={{ marginLeft: 4 }} />
               </View>
-              <Text style={styles.securityText}>Currency</Text>
-              <Text style={styles.settingValue}>{state.currency}</Text>
-              <Ionicons name="chevron-forward" size={18} color={COLORS.gray300} style={{ marginLeft: 4 }} />
-            </TouchableOpacity>
+            </ScalePressable>
             <View style={styles.separator} />
             {/* Push Notifications */}
             <View style={styles.securityRow}>
@@ -442,341 +457,406 @@ export default function Profile() {
               />
             </View>
           </View>
-        </FadeInView>
+        </FadeScaleIn>
 
         {/* EXPORT DATA */}
-        <FadeInView delay={500}>
+        <FadeScaleIn delay={550} duration={500}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>EXPORT DATA</Text>
           </View>
           <View style={styles.card}>
             <View style={styles.exportRow}>
-              <TouchableOpacity style={styles.exportBtn}>
-                <Ionicons name="document-text-outline" size={24} color={COLORS.primary} />
-                <Text style={styles.exportText}>CSV</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.exportBtn}>
-                <Ionicons name="receipt-outline" size={24} color={COLORS.success} />
-                <Text style={styles.exportText}>PDF</Text>
-              </TouchableOpacity>
+              <ScalePressable onPress={() => {}}>
+                <View style={styles.exportBtn}>
+                  <Ionicons name="document-text-outline" size={24} color={COLORS.primary} />
+                  <Text style={styles.exportText}>CSV</Text>
+                </View>
+              </ScalePressable>
+              <ScalePressable onPress={() => {}}>
+                <View style={styles.exportBtn}>
+                  <Ionicons name="receipt-outline" size={24} color={COLORS.success} />
+                  <Text style={styles.exportText}>PDF</Text>
+                </View>
+              </ScalePressable>
             </View>
             <Text style={styles.exportSub}>Download a full history of your transactions including dates, categories, notes, and payment methods for external accounting.</Text>
           </View>
-        </FadeInView>
+        </FadeScaleIn>
 
         {/* SECURITY & ACCOUNT SETTINGS (Redesigned matching image) */}
-        <FadeInView delay={600}>
+        <FadeScaleIn delay={650} duration={500}>
           <View style={[styles.card, { backgroundColor: '#E2E6EB', paddingVertical: 8, paddingHorizontal: 0, borderRadius: 24 }]}>
-            <TouchableOpacity style={styles.simpleRow} onPress={() => router.push("/manage-payment-methods" as any)}>
-              <View style={styles.diamondIcon} />
-              <Text style={styles.simpleRowText}>Manage Payment Methods</Text>
-              <Ionicons name="chevron-forward" size={16} color={COLORS.gray400} />
-            </TouchableOpacity>
+            <ScalePressable onPress={() => router.push("/manage-payment-methods" as any)}>
+              <View style={styles.simpleRow}>
+                <View style={styles.diamondIcon} />
+                <Text style={styles.simpleRowText}>Manage Payment Methods</Text>
+                <Ionicons name="chevron-forward" size={16} color={COLORS.gray400} />
+              </View>
+            </ScalePressable>
 
             <View style={[styles.separator, { backgroundColor: 'rgba(0,0,0,0.05)', height: 1.5, marginHorizontal: 20 }]} />
 
-            <TouchableOpacity style={styles.simpleRow} onPress={() => setShowPasswordModal(true)}>
-              <View style={styles.diamondIcon} />
-              <Text style={styles.simpleRowText}>Change Password</Text>
-              <Ionicons name="chevron-forward" size={16} color={COLORS.gray400} />
-            </TouchableOpacity>
+            <ScalePressable onPress={() => setShowPasswordModal(true)}>
+              <View style={styles.simpleRow}>
+                <View style={styles.diamondIcon} />
+                <Text style={styles.simpleRowText}>Change Password</Text>
+                <Ionicons name="chevron-forward" size={16} color={COLORS.gray400} />
+              </View>
+            </ScalePressable>
 
             <View style={[styles.separator, { backgroundColor: 'rgba(0,0,0,0.05)', height: 1.5, marginHorizontal: 20 }]} />
 
-            <TouchableOpacity style={styles.simpleRow} onPress={() => setShowPrivacyModal(true)}>
-              <View style={styles.diamondIcon} />
-              <Text style={styles.simpleRowText}>Privacy Settings</Text>
-              <Ionicons name="chevron-forward" size={16} color={COLORS.gray400} />
-            </TouchableOpacity>
+            <ScalePressable onPress={() => setShowPrivacyModal(true)}>
+              <View style={styles.simpleRow}>
+                <View style={styles.diamondIcon} />
+                <Text style={styles.simpleRowText}>Privacy Settings</Text>
+                <Ionicons name="chevron-forward" size={16} color={COLORS.gray400} />
+              </View>
+            </ScalePressable>
           </View>
-        </FadeInView>
+        </FadeScaleIn>
 
         {/* LOGOUT */}
-        <FadeInView delay={700} style={styles.logoutCard}>
-          <Text style={styles.logoutHint}>Your data is safe and stored locally.</Text>
-          <ScalePressable
-            style={styles.logoutBtn}
-            onPress={() => Alert.alert("Log Out", "Are you sure?", [
-              { text: "Cancel", style: "cancel" },
-              { text: "Log Out", style: "destructive", onPress: () => { } }
-            ])}
-          >
-            <Text style={styles.logoutBtnText}>Log Out</Text>
-          </ScalePressable>
-        </FadeInView>
+        <FadeScaleIn delay={750} duration={500}>
+          <View style={styles.logoutCard}>
+            <Text style={styles.logoutHint}>Your data is safe and stored locally.</Text>
+            <ScalePressable
+              onPress={() => Alert.alert("Log Out", "Are you sure?", [
+                { text: "Cancel", style: "cancel" },
+                { text: "Log Out", style: "destructive", onPress: () => { } }
+              ])}
+            >
+              <View style={styles.logoutBtn}>
+                <Text style={styles.logoutBtnText}>Log Out</Text>
+              </View>
+            </ScalePressable>
+          </View>
+        </FadeScaleIn>
       </Animated.ScrollView>
 
-      {/* MODALS */}
+      {/* MODALS with SlideUpView */}
       <Modal visible={isEditingName} transparent animationType="fade">
         <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Edit Name</Text>
-              <TouchableOpacity style={styles.closeBtn} onPress={() => setIsEditingName(false)}>
-                <Ionicons name="close" size={20} color={COLORS.gray500} />
-              </TouchableOpacity>
+          <SlideUpView slideDistance={60} duration={350}>
+            <View style={styles.modalContent}>
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>Edit Name</Text>
+                <ScalePressable onPress={() => setIsEditingName(false)}>
+                  <View style={styles.closeBtn}>
+                    <Ionicons name="close" size={20} color={COLORS.gray500} />
+                  </View>
+                </ScalePressable>
+              </View>
+              <TextInput
+                style={styles.input}
+                value={editedName}
+                onChangeText={setEditedName}
+                placeholder="Your name"
+                autoFocus
+              />
+              <View style={styles.modalButtons}>
+                <ScalePressable onPress={() => setIsEditingName(false)}>
+                  <View style={styles.cancelBtn}>
+                    <Text style={styles.cancelBtnText}>Cancel</Text>
+                  </View>
+                </ScalePressable>
+                <ScalePressable onPress={handleSaveName}>
+                  <View style={styles.saveBtn}>
+                    <Text style={styles.saveBtnText}>Save</Text>
+                  </View>
+                </ScalePressable>
+              </View>
             </View>
-            <TextInput
-              style={styles.input}
-              value={editedName}
-              onChangeText={setEditedName}
-              placeholder="Your name"
-              autoFocus
-            />
-            <View style={styles.modalButtons}>
-              <TouchableOpacity style={styles.cancelBtn} onPress={() => setIsEditingName(false)}>
-                <Text style={styles.cancelBtnText}>Cancel</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.saveBtn} onPress={handleSaveName}>
-                <Text style={styles.saveBtnText}>Save</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
+          </SlideUpView>
         </View>
       </Modal>
 
       <Modal visible={isEditingEmail} transparent animationType="fade">
         <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Edit Email</Text>
-              <TouchableOpacity style={styles.closeBtn} onPress={() => setIsEditingEmail(false)}>
-                <Ionicons name="close" size={20} color={COLORS.gray500} />
-              </TouchableOpacity>
+          <SlideUpView slideDistance={60} duration={350}>
+            <View style={styles.modalContent}>
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>Edit Email</Text>
+                <ScalePressable onPress={() => setIsEditingEmail(false)}>
+                  <View style={styles.closeBtn}>
+                    <Ionicons name="close" size={20} color={COLORS.gray500} />
+                  </View>
+                </ScalePressable>
+              </View>
+              <TextInput
+                style={styles.input}
+                value={editedEmail}
+                onChangeText={setEditedEmail}
+                placeholder="Your email"
+                autoFocus
+                keyboardType="email-address"
+              />
+              <View style={styles.modalButtons}>
+                <ScalePressable onPress={() => setIsEditingEmail(false)}>
+                  <View style={styles.cancelBtn}>
+                    <Text style={styles.cancelBtnText}>Cancel</Text>
+                  </View>
+                </ScalePressable>
+                <ScalePressable onPress={handleSaveEmail}>
+                  <View style={styles.saveBtn}>
+                    <Text style={styles.saveBtnText}>Save</Text>
+                  </View>
+                </ScalePressable>
+              </View>
             </View>
-            <TextInput
-              style={styles.input}
-              value={editedEmail}
-              onChangeText={setEditedEmail}
-              placeholder="Your email"
-              autoFocus
-              keyboardType="email-address"
-            />
-            <View style={styles.modalButtons}>
-              <TouchableOpacity style={styles.cancelBtn} onPress={() => setIsEditingEmail(false)}>
-                <Text style={styles.cancelBtnText}>Cancel</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.saveBtn} onPress={handleSaveEmail}>
-                <Text style={styles.saveBtnText}>Save</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
+          </SlideUpView>
         </View>
       </Modal>
 
       {/* CURRENCY PICKER MODAL */}
       <Modal visible={showCurrencyModal} transparent animationType="fade">
         <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Select Currency</Text>
-              <TouchableOpacity style={styles.closeBtn} onPress={() => setShowCurrencyModal(false)}>
-                <Ionicons name="close" size={20} color={COLORS.gray500} />
-              </TouchableOpacity>
+          <SlideUpView slideDistance={80} duration={400}>
+            <View style={styles.modalContent}>
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>Select Currency</Text>
+                <ScalePressable onPress={() => setShowCurrencyModal(false)}>
+                  <View style={styles.closeBtn}>
+                    <Ionicons name="close" size={20} color={COLORS.gray500} />
+                  </View>
+                </ScalePressable>
+              </View>
+              <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "center", gap: 12, paddingVertical: 10 }}>
+                {["₹", "$", "€", "£", "¥"].map((sym, index) => (
+                  <FadeScaleIn key={sym} delay={index * 50} duration={250} startScale={0.8}>
+                    <ScalePressable onPress={() => {
+                      updateCurrency(sym);
+                      setShowCurrencyModal(false);
+                    }}>
+                      <View style={{
+                        paddingHorizontal: 20,
+                        paddingVertical: 16,
+                        borderRadius: 12,
+                        backgroundColor: state.currency === sym ? COLORS.primary : COLORS.gray50,
+                        minWidth: 60,
+                        alignItems: "center"
+                      }}>
+                        <Text style={{ fontSize: 24, fontWeight: "700", color: state.currency === sym ? "#fff" : COLORS.textHeader }}>{sym}</Text>
+                      </View>
+                    </ScalePressable>
+                  </FadeScaleIn>
+                ))}
+              </View>
             </View>
-            <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "center", gap: 12, paddingVertical: 10 }}>
-              {["₹", "$", "€", "£", "¥"].map((sym) => (
-                <TouchableOpacity
-                  key={sym}
-                  style={{
-                    paddingHorizontal: 20,
-                    paddingVertical: 16,
-                    borderRadius: 12,
-                    backgroundColor: state.currency === sym ? COLORS.primary : COLORS.gray50,
-                    minWidth: 60,
-                    alignItems: "center"
-                  }}
-                  onPress={() => {
-                    updateCurrency(sym);
-                    setShowCurrencyModal(false);
-                  }}
-                >
-                  <Text style={{ fontSize: 24, fontWeight: "700", color: state.currency === sym ? "#fff" : COLORS.textHeader }}>{sym}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </View>
+          </SlideUpView>
         </View>
       </Modal>
 
-      <Modal visible={showCategoryModal} transparent animationType="slide">
+      <Modal visible={showCategoryModal} transparent animationType="fade">
         <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Add Category</Text>
-              <TouchableOpacity style={styles.closeBtn} onPress={() => setShowCategoryModal(false)}>
-                <Ionicons name="close" size={20} color={COLORS.gray500} />
-              </TouchableOpacity>
-            </View>
-            <ScrollView style={styles.modalScrollView} showsVerticalScrollIndicator={false}>
-              <Text style={styles.inputLabel}>CATEGORY NAME</Text>
-              <TextInput
-                style={styles.input}
-                value={newCategoryName}
-                onChangeText={setNewCategoryName}
-                placeholder="e.g., Coffee"
-                autoFocus
-              />
-              <Text style={styles.inputLabel}>SELECT ICON</Text>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.iconPicker}>
-                {ICON_OPTIONS.map((icon, i) => (
-                  <TouchableOpacity
-                    key={i}
-                    style={[styles.iconOption, selectedIcon === icon && styles.iconOptionSelected]}
-                    onPress={() => setSelectedIcon(icon)}
-                  >
-                    <Ionicons name={icon} size={24} color={selectedIcon === icon ? "#fff" : COLORS.gray400} />
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
-              <Text style={styles.inputLabel}>SELECT COLOR</Text>
-              <View style={styles.colorPicker}>
-                {COLOR_OPTIONS.map((color, i) => (
-                  <TouchableOpacity
-                    key={i}
-                    style={[styles.colorOption, { backgroundColor: color }, selectedColor === color && styles.colorOptionSelected]}
-                    onPress={() => setSelectedColor(color)}
-                  />
-                ))}
+          <SlideUpView slideDistance={100} duration={400}>
+            <View style={styles.modalContent}>
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>Add Category</Text>
+                <ScalePressable onPress={() => setShowCategoryModal(false)}>
+                  <View style={styles.closeBtn}>
+                    <Ionicons name="close" size={20} color={COLORS.gray500} />
+                  </View>
+                </ScalePressable>
               </View>
-              <TouchableOpacity style={styles.customColorBtn} onPress={() => setShowCustomColor(true)}>
-                <Text style={styles.customColorText}>+ Add Custom Color</Text>
-              </TouchableOpacity>
-            </ScrollView>
-            <View style={styles.modalButtons}>
-              <TouchableOpacity style={styles.cancelBtn} onPress={() => setShowCategoryModal(false)}>
-                <Text style={styles.cancelBtnText}>Cancel</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.saveBtn} onPress={handleAddCategory}>
-                <Text style={styles.saveBtnText}>Add</Text>
-              </TouchableOpacity>
+              <ScrollView style={styles.modalScrollView} showsVerticalScrollIndicator={false}>
+                <Text style={styles.inputLabel}>CATEGORY NAME</Text>
+                <TextInput
+                  style={styles.input}
+                  value={newCategoryName}
+                  onChangeText={setNewCategoryName}
+                  placeholder="e.g., Coffee"
+                  autoFocus
+                />
+                <Text style={styles.inputLabel}>SELECT ICON</Text>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.iconPicker}>
+                  {ICON_OPTIONS.map((icon, i) => (
+                    <FadeScaleIn key={i} delay={i * 20} duration={250} startScale={0.8}>
+                      <ScalePressable onPress={() => setSelectedIcon(icon)}>
+                        <View style={[styles.iconOption, selectedIcon === icon && styles.iconOptionSelected]}>
+                          <Ionicons name={icon} size={24} color={selectedIcon === icon ? "#fff" : COLORS.gray400} />
+                        </View>
+                      </ScalePressable>
+                    </FadeScaleIn>
+                  ))}
+                </ScrollView>
+                <Text style={styles.inputLabel}>SELECT COLOR</Text>
+                <View style={styles.colorPicker}>
+                  {COLOR_OPTIONS.map((color, i) => (
+                    <FadeScaleIn key={i} delay={i * 30} duration={250} startScale={0.8}>
+                      <ScalePressable onPress={() => setSelectedColor(color)}>
+                        <View style={[styles.colorOption, { backgroundColor: color }, selectedColor === color && styles.colorOptionSelected]} />
+                      </ScalePressable>
+                    </FadeScaleIn>
+                  ))}
+                </View>
+                <ScalePressable onPress={() => setShowCustomColor(true)}>
+                  <View style={styles.customColorBtn}>
+                    <Text style={styles.customColorText}>+ Add Custom Color</Text>
+                  </View>
+                </ScalePressable>
+              </ScrollView>
+              <View style={styles.modalButtons}>
+                <ScalePressable onPress={() => setShowCategoryModal(false)}>
+                  <View style={styles.cancelBtn}>
+                    <Text style={styles.cancelBtnText}>Cancel</Text>
+                  </View>
+                </ScalePressable>
+                <ScalePressable onPress={handleAddCategory}>
+                  <View style={styles.saveBtn}>
+                    <Text style={styles.saveBtnText}>Add</Text>
+                  </View>
+                </ScalePressable>
+              </View>
             </View>
-          </View>
+          </SlideUpView>
         </View>
       </Modal>
 
       <Modal visible={showCustomColor} transparent animationType="fade">
         <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Custom Color</Text>
-              <TouchableOpacity style={styles.closeBtn} onPress={() => setShowCustomColor(false)}>
-                <Ionicons name="close" size={20} color={COLORS.gray500} />
-              </TouchableOpacity>
+          <SlideUpView slideDistance={60} duration={350}>
+            <View style={styles.modalContent}>
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>Custom Color</Text>
+                <ScalePressable onPress={() => setShowCustomColor(false)}>
+                  <View style={styles.closeBtn}>
+                    <Ionicons name="close" size={20} color={COLORS.gray500} />
+                  </View>
+                </ScalePressable>
+              </View>
+              <TextInput
+                style={styles.input}
+                value={customColorInput}
+                onChangeText={setCustomColorInput}
+                placeholder="#FF6B6B"
+                autoFocus
+                maxLength={7}
+              />
+              <View style={styles.modalButtons}>
+                <ScalePressable onPress={() => setShowCustomColor(false)}>
+                  <View style={styles.cancelBtn}>
+                    <Text style={styles.cancelBtnText}>Cancel</Text>
+                  </View>
+                </ScalePressable>
+                <ScalePressable onPress={applyCustomColor}>
+                  <View style={styles.saveBtn}>
+                    <Text style={styles.saveBtnText}>Apply</Text>
+                  </View>
+                </ScalePressable>
+              </View>
             </View>
-            <TextInput
-              style={styles.input}
-              value={customColorInput}
-              onChangeText={setCustomColorInput}
-              placeholder="#FF6B6B"
-              autoFocus
-              maxLength={7}
-            />
-            <View style={styles.modalButtons}>
-              <TouchableOpacity style={styles.cancelBtn} onPress={() => setShowCustomColor(false)}>
-                <Text style={styles.cancelBtnText}>Cancel</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.saveBtn} onPress={applyCustomColor}>
-                <Text style={styles.saveBtnText}>Apply</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
+          </SlideUpView>
         </View>
       </Modal>
 
       {/* Change Password Modal */}
       <Modal visible={showPasswordModal} transparent animationType="fade">
         <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Change Password</Text>
-              <TouchableOpacity style={styles.closeBtn} onPress={() => setShowPasswordModal(false)}>
-                <Ionicons name="close" size={20} color={COLORS.gray500} />
-              </TouchableOpacity>
+          <SlideUpView slideDistance={80} duration={400}>
+            <View style={styles.modalContent}>
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>Change Password</Text>
+                <ScalePressable onPress={() => setShowPasswordModal(false)}>
+                  <View style={styles.closeBtn}>
+                    <Ionicons name="close" size={20} color={COLORS.gray500} />
+                  </View>
+                </ScalePressable>
+              </View>
+              <Text style={styles.inputLabel}>Current Password</Text>
+              <TextInput
+                style={styles.input}
+                value={currentPassword}
+                onChangeText={setCurrentPassword}
+                secureTextEntry
+                placeholder="Enter current password"
+              />
+              <Text style={styles.inputLabel}>New Password</Text>
+              <TextInput
+                style={styles.input}
+                value={newPassword}
+                onChangeText={setNewPassword}
+                secureTextEntry
+                placeholder="Enter new password"
+              />
+              <Text style={styles.inputLabel}>Confirm New Password</Text>
+              <TextInput
+                style={styles.input}
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+                secureTextEntry
+                placeholder="Confirm new password"
+              />
+              <View style={styles.modalButtons}>
+                <ScalePressable onPress={() => setShowPasswordModal(false)}>
+                  <View style={styles.cancelBtn}>
+                    <Text style={styles.cancelBtnText}>Cancel</Text>
+                  </View>
+                </ScalePressable>
+                <ScalePressable onPress={handleChangePassword}>
+                  <View style={styles.saveBtn}>
+                    <Text style={styles.saveBtnText}>Save</Text>
+                  </View>
+                </ScalePressable>
+              </View>
             </View>
-            <Text style={styles.inputLabel}>Current Password</Text>
-            <TextInput
-              style={styles.input}
-              value={currentPassword}
-              onChangeText={setCurrentPassword}
-              secureTextEntry
-              placeholder="Enter current password"
-            />
-            <Text style={styles.inputLabel}>New Password</Text>
-            <TextInput
-              style={styles.input}
-              value={newPassword}
-              onChangeText={setNewPassword}
-              secureTextEntry
-              placeholder="Enter new password"
-            />
-            <Text style={styles.inputLabel}>Confirm New Password</Text>
-            <TextInput
-              style={styles.input}
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              secureTextEntry
-              placeholder="Confirm new password"
-            />
-            <View style={styles.modalButtons}>
-              <TouchableOpacity style={styles.cancelBtn} onPress={() => setShowPasswordModal(false)}>
-                <Text style={styles.cancelBtnText}>Cancel</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.saveBtn} onPress={handleChangePassword}>
-                <Text style={styles.saveBtnText}>Save</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
+          </SlideUpView>
         </View>
       </Modal>
 
       {/* Privacy Settings Modal */}
       <Modal visible={showPrivacyModal} transparent animationType="fade">
         <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Privacy Settings</Text>
-              <TouchableOpacity style={styles.closeBtn} onPress={() => setShowPrivacyModal(false)}>
-                <Ionicons name="close" size={20} color={COLORS.gray500} />
-              </TouchableOpacity>
-            </View>
+          <SlideUpView slideDistance={80} duration={400}>
+            <View style={styles.modalContent}>
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>Privacy Settings</Text>
+                <ScalePressable onPress={() => setShowPrivacyModal(false)}>
+                  <View style={styles.closeBtn}>
+                    <Ionicons name="close" size={20} color={COLORS.gray500} />
+                  </View>
+                </ScalePressable>
+              </View>
 
-            <View style={styles.securityRow}>
-              <View style={[styles.settingIcon, { backgroundColor: COLORS.infoLight }]}>
-                <Ionicons name="analytics-outline" size={20} color={COLORS.info} />
+              <View style={styles.securityRow}>
+                <View style={[styles.settingIcon, { backgroundColor: COLORS.infoLight }]}>
+                  <Ionicons name="analytics-outline" size={20} color={COLORS.info} />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.securityText}>Share Analytics Data</Text>
+                  <Text style={{ fontSize: 12, color: COLORS.gray400 }}>Help us improve the app</Text>
+                </View>
+                <Switch
+                  value={shareData}
+                  onValueChange={setShareData}
+                  trackColor={{ false: COLORS.gray200, true: COLORS.primary }}
+                />
               </View>
-              <View style={{ flex: 1 }}>
-                <Text style={styles.securityText}>Share Analytics Data</Text>
-                <Text style={{ fontSize: 12, color: COLORS.gray400 }}>Help us improve the app</Text>
+              <View style={styles.separator} />
+              <View style={styles.securityRow}>
+                <View style={[styles.settingIcon, { backgroundColor: COLORS.warningLight }]}>
+                  <Ionicons name="megaphone-outline" size={20} color={COLORS.warning} />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.securityText}>Allow Targeted Ads</Text>
+                  <Text style={{ fontSize: 12, color: COLORS.gray400 }}>Show relevant advertisements</Text>
+                </View>
+                <Switch
+                  value={targetedAds}
+                  onValueChange={setTargetedAds}
+                  trackColor={{ false: COLORS.gray200, true: COLORS.primary }}
+                />
               </View>
-              <Switch
-                value={shareData}
-                onValueChange={setShareData}
-                trackColor={{ false: COLORS.gray200, true: COLORS.primary }}
-              />
-            </View>
-            <View style={styles.separator} />
-            <View style={styles.securityRow}>
-              <View style={[styles.settingIcon, { backgroundColor: COLORS.warningLight }]}>
-                <Ionicons name="megaphone-outline" size={20} color={COLORS.warning} />
-              </View>
-              <View style={{ flex: 1 }}>
-                <Text style={styles.securityText}>Allow Targeted Ads</Text>
-                <Text style={{ fontSize: 12, color: COLORS.gray400 }}>Show relevant advertisements</Text>
-              </View>
-              <Switch
-                value={targetedAds}
-                onValueChange={setTargetedAds}
-                trackColor={{ false: COLORS.gray200, true: COLORS.primary }}
-              />
-            </View>
 
-            <View style={[styles.modalButtons, { marginTop: 24 }]}>
-              <TouchableOpacity style={styles.saveBtn} onPress={handleSavePrivacy}>
-                <Text style={styles.saveBtnText}>Save Preferences</Text>
-              </TouchableOpacity>
+              <View style={[styles.modalButtons, { marginTop: 24 }]}>
+                <ScalePressable onPress={handleSavePrivacy}>
+                  <View style={styles.saveBtn}>
+                    <Text style={styles.saveBtnText}>Save Preferences</Text>
+                  </View>
+                </ScalePressable>
+              </View>
             </View>
-          </View>
+          </SlideUpView>
         </View>
       </Modal>
     </View>
