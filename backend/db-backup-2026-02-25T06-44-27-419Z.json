@@ -1,0 +1,1573 @@
+{
+  "cashBalance": -500,
+  "upiBalance": 0,
+  "expenses": [
+    {
+      "id": "1771842095875",
+      "amount": 10,
+      "title": "Test",
+      "category": "Food & Dining",
+      "date": "2026-02-23",
+      "payment": "UPI",
+      "notes": ""
+    },
+    {
+      "id": "1771842113781",
+      "amount": 10,
+      "title": "Test2",
+      "category": "Food & Dining",
+      "date": "2026-02-23",
+      "payment": "UPI",
+      "notes": ""
+    },
+    {
+      "id": "1771848115704",
+      "amount": 100,
+      "title": "Salary",
+      "category": "Test",
+      "date": "2026-02-23",
+      "payment": "netbanking",
+      "notes": "",
+      "type": "income",
+      "bank": "Hdfc",
+      "upiApp": "SUPERMONEY"
+    },
+    {
+      "id": "1771869252307",
+      "amount": 15,
+      "title": "Meow",
+      "category": "Gym & Fitness",
+      "date": "2026-02-23",
+      "payment": "UPI",
+      "notes": "Hell yeah ",
+      "type": "outcome"
+    },
+    {
+      "id": "1771993758323",
+      "amount": 10000,
+      "title": "Faah",
+      "category": "Salary",
+      "date": "2026-02-25",
+      "payment": "netbanking",
+      "notes": "",
+      "type": "income",
+      "bank": "ICICI Bank",
+      "upiApp": "Paytm UPI"
+    },
+    {
+      "id": "1771993780136",
+      "amount": 20000,
+      "title": "Ll",
+      "category": "Salary",
+      "date": "2026-02-25",
+      "payment": "cash",
+      "notes": "",
+      "type": "income"
+    },
+    {
+      "id": "1771995191732",
+      "amount": 10000,
+      "title": "Tesr",
+      "category": "Healthcare",
+      "date": "2026-02-25",
+      "payment": "Cash",
+      "notes": "",
+      "type": "outcome"
+    },
+    {
+      "id": "1771995217350",
+      "amount": 10000,
+      "title": "Test2",
+      "category": "Test",
+      "date": "2026-02-25",
+      "payment": "Net Banking",
+      "notes": "",
+      "type": "outcome"
+    },
+    {
+      "id": "1772000564991",
+      "title": "",
+      "amount": 100,
+      "category": "Food"
+    },
+    {
+      "id": "1772000564999",
+      "title": "Test",
+      "amount": null
+    },
+    {
+      "id": "1772000565002",
+      "title": "Zero Test",
+      "amount": 0,
+      "category": "Food"
+    },
+    {
+      "id": "1772000565005",
+      "title": "Negative Test",
+      "amount": -100,
+      "category": "Food"
+    },
+    {
+      "id": "1772000565008",
+      "title": "Test <script>alert(\"xss\")</script>& escaping!@#$%",
+      "amount": 100,
+      "category": "Food"
+    },
+    {
+      "id": "1772000565011",
+      "title": "Тест 测试 的食物",
+      "amount": 100,
+      "category": "Food"
+    },
+    {
+      "id": "1772000565014",
+      "title": "🎉 Birthday Party 🎂",
+      "amount": 500,
+      "category": "Entertainment"
+    },
+    {
+      "id": "1772000565017",
+      "title": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "amount": 100,
+      "category": "Food"
+    },
+    {
+      "id": "1772000565020",
+      "title": "Test",
+      "amount": 100,
+      "category": "Food",
+      "notes": "Line1\nLine2\tTab\r\nNewline \"quotes\" 'single'"
+    },
+    {
+      "id": "1772000565024",
+      "title": "Old",
+      "amount": 100,
+      "date": "1900-01-01"
+    },
+    {
+      "id": "1772000565026",
+      "title": "Future",
+      "amount": 100,
+      "date": "2100-12-31"
+    },
+    {
+      "id": "1772000565029",
+      "title": "Invalid",
+      "amount": 100,
+      "date": "not-a-date"
+    },
+    {
+      "id": "1772000638199",
+      "title": "Concurrent Test 0",
+      "amount": 0,
+      "category": "Food",
+      "date": "2024-01-15"
+    },
+    {
+      "id": "1772000638200",
+      "title": "Concurrent Test 1",
+      "amount": 10,
+      "category": "Food",
+      "date": "2024-01-15"
+    },
+    {
+      "id": "1772000638201",
+      "title": "Concurrent Test 2",
+      "amount": 20,
+      "category": "Food",
+      "date": "2024-01-15"
+    },
+    {
+      "id": "1772000638203",
+      "title": "Concurrent Test 3",
+      "amount": 30,
+      "category": "Food",
+      "date": "2024-01-15"
+    },
+    {
+      "id": "1772000638204",
+      "title": "Concurrent Test 4",
+      "amount": 40,
+      "category": "Food",
+      "date": "2024-01-15"
+    },
+    {
+      "id": "1772000638206",
+      "title": "Concurrent Test 5",
+      "amount": 50,
+      "category": "Food",
+      "date": "2024-01-15"
+    },
+    {
+      "id": "1772000638207",
+      "title": "Concurrent Test 6",
+      "amount": 60,
+      "category": "Food",
+      "date": "2024-01-15"
+    },
+    {
+      "id": "1772000638209",
+      "title": "Concurrent Test 7",
+      "amount": 70,
+      "category": "Food",
+      "date": "2024-01-15"
+    },
+    {
+      "id": "1772000638210",
+      "title": "Concurrent Test 8",
+      "amount": 80,
+      "category": "Food",
+      "date": "2024-01-15"
+    },
+    {
+      "id": "1772000638212",
+      "title": "Concurrent Test 9",
+      "amount": 90,
+      "category": "Food",
+      "date": "2024-01-15"
+    },
+    {
+      "id": "1772000638222",
+      "title": "During Read",
+      "amount": 100
+    },
+    {
+      "id": "1772000638228",
+      "title": "Income 0",
+      "amount": 100,
+      "type": "income",
+      "payment": "cash"
+    },
+    {
+      "id": "1772000638230",
+      "title": "Income 1",
+      "amount": 100,
+      "type": "income",
+      "payment": "cash"
+    },
+    {
+      "id": "1772000638231",
+      "title": "Income 2",
+      "amount": 100,
+      "type": "income",
+      "payment": "cash"
+    },
+    {
+      "id": "1772000638232",
+      "title": "Income 3",
+      "amount": 100,
+      "type": "income",
+      "payment": "cash"
+    },
+    {
+      "id": "1772000638234",
+      "title": "Income 4",
+      "amount": 100,
+      "type": "income",
+      "payment": "cash"
+    },
+    {
+      "id": "1772000638237",
+      "title": "Update 3",
+      "amount": 300
+    },
+    {
+      "id": "1772000755393",
+      "title": "Load Test 0",
+      "amount": 0,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755399",
+      "title": "Load Test 1",
+      "amount": 10,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755402",
+      "title": "Load Test 2",
+      "amount": 20,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755404",
+      "title": "Load Test 3",
+      "amount": 30,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755407",
+      "title": "Load Test 4",
+      "amount": 40,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755409",
+      "title": "Load Test 5",
+      "amount": 50,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755411",
+      "title": "Load Test 6",
+      "amount": 60,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755413",
+      "title": "Load Test 7",
+      "amount": 70,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755416",
+      "title": "Load Test 8",
+      "amount": 80,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755418",
+      "title": "Load Test 9",
+      "amount": 90,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755420",
+      "title": "Load Test 10",
+      "amount": 100,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755422",
+      "title": "Load Test 11",
+      "amount": 110,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755423",
+      "title": "Load Test 12",
+      "amount": 120,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755425",
+      "title": "Load Test 13",
+      "amount": 130,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755427",
+      "title": "Load Test 14",
+      "amount": 140,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755429",
+      "title": "Load Test 15",
+      "amount": 150,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755431",
+      "title": "Load Test 16",
+      "amount": 160,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755433",
+      "title": "Load Test 17",
+      "amount": 170,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755434",
+      "title": "Load Test 18",
+      "amount": 180,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755436",
+      "title": "Load Test 19",
+      "amount": 190,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755437",
+      "title": "Load Test 20",
+      "amount": 200,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755439",
+      "title": "Load Test 21",
+      "amount": 210,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755441",
+      "title": "Load Test 22",
+      "amount": 220,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755443",
+      "title": "Load Test 23",
+      "amount": 230,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755445",
+      "title": "Load Test 24",
+      "amount": 240,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755448",
+      "title": "Load Test 25",
+      "amount": 250,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755450",
+      "title": "Load Test 26",
+      "amount": 260,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755451",
+      "title": "Load Test 27",
+      "amount": 270,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755453",
+      "title": "Load Test 28",
+      "amount": 280,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755455",
+      "title": "Load Test 29",
+      "amount": 290,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755457",
+      "title": "Load Test 30",
+      "amount": 300,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755459",
+      "title": "Load Test 31",
+      "amount": 310,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755461",
+      "title": "Load Test 32",
+      "amount": 320,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755463",
+      "title": "Load Test 33",
+      "amount": 330,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755465",
+      "title": "Load Test 34",
+      "amount": 340,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755467",
+      "title": "Load Test 35",
+      "amount": 350,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755469",
+      "title": "Load Test 36",
+      "amount": 360,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755471",
+      "title": "Load Test 37",
+      "amount": 370,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755473",
+      "title": "Load Test 38",
+      "amount": 380,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755475",
+      "title": "Load Test 39",
+      "amount": 390,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755477",
+      "title": "Load Test 40",
+      "amount": 400,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755479",
+      "title": "Load Test 41",
+      "amount": 410,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755482",
+      "title": "Load Test 42",
+      "amount": 420,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755484",
+      "title": "Load Test 43",
+      "amount": 430,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755487",
+      "title": "Load Test 44",
+      "amount": 440,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755489",
+      "title": "Load Test 45",
+      "amount": 450,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755491",
+      "title": "Load Test 46",
+      "amount": 460,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755493",
+      "title": "Load Test 47",
+      "amount": 470,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755494",
+      "title": "Load Test 48",
+      "amount": 480,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755496",
+      "title": "Load Test 49",
+      "amount": 490,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755498",
+      "title": "Load Test 50",
+      "amount": 500,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755499",
+      "title": "Load Test 51",
+      "amount": 510,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755501",
+      "title": "Load Test 52",
+      "amount": 520,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755503",
+      "title": "Load Test 53",
+      "amount": 530,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755505",
+      "title": "Load Test 54",
+      "amount": 540,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755506",
+      "title": "Load Test 55",
+      "amount": 550,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755508",
+      "title": "Load Test 56",
+      "amount": 560,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755510",
+      "title": "Load Test 57",
+      "amount": 570,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755512",
+      "title": "Load Test 58",
+      "amount": 580,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755514",
+      "title": "Load Test 59",
+      "amount": 590,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755516",
+      "title": "Load Test 60",
+      "amount": 600,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755518",
+      "title": "Load Test 61",
+      "amount": 610,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755519",
+      "title": "Load Test 62",
+      "amount": 620,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755521",
+      "title": "Load Test 63",
+      "amount": 630,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755523",
+      "title": "Load Test 64",
+      "amount": 640,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755525",
+      "title": "Load Test 65",
+      "amount": 650,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755527",
+      "title": "Load Test 66",
+      "amount": 660,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755528",
+      "title": "Load Test 67",
+      "amount": 670,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755530",
+      "title": "Load Test 68",
+      "amount": 680,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755532",
+      "title": "Load Test 69",
+      "amount": 690,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755534",
+      "title": "Load Test 70",
+      "amount": 700,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755536",
+      "title": "Load Test 71",
+      "amount": 710,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755538",
+      "title": "Load Test 72",
+      "amount": 720,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755540",
+      "title": "Load Test 73",
+      "amount": 730,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755543",
+      "title": "Load Test 74",
+      "amount": 740,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755545",
+      "title": "Load Test 75",
+      "amount": 750,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755546",
+      "title": "Load Test 76",
+      "amount": 760,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755548",
+      "title": "Load Test 77",
+      "amount": 770,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755550",
+      "title": "Load Test 78",
+      "amount": 780,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755551",
+      "title": "Load Test 79",
+      "amount": 790,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755553",
+      "title": "Load Test 80",
+      "amount": 800,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755555",
+      "title": "Load Test 81",
+      "amount": 810,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755558",
+      "title": "Load Test 82",
+      "amount": 820,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755559",
+      "title": "Load Test 83",
+      "amount": 830,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755562",
+      "title": "Load Test 84",
+      "amount": 840,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755564",
+      "title": "Load Test 85",
+      "amount": 850,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755566",
+      "title": "Load Test 86",
+      "amount": 860,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755568",
+      "title": "Load Test 87",
+      "amount": 870,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755570",
+      "title": "Load Test 88",
+      "amount": 880,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755573",
+      "title": "Load Test 89",
+      "amount": 890,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755575",
+      "title": "Load Test 90",
+      "amount": 900,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755577",
+      "title": "Load Test 91",
+      "amount": 910,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755578",
+      "title": "Load Test 92",
+      "amount": 920,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755580",
+      "title": "Load Test 93",
+      "amount": 930,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755582",
+      "title": "Load Test 94",
+      "amount": 940,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755584",
+      "title": "Load Test 95",
+      "amount": 950,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755586",
+      "title": "Load Test 96",
+      "amount": 960,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755588",
+      "title": "Load Test 97",
+      "amount": 970,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755590",
+      "title": "Load Test 98",
+      "amount": 980,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755592",
+      "title": "Load Test 99",
+      "amount": 990,
+      "category": "Food"
+    },
+    {
+      "id": "1772000755821"
+    },
+    {
+      "id": "1772000755832",
+      "title": "Salary",
+      "amount": 5000,
+      "type": "income",
+      "payment": "cash"
+    },
+    {
+      "id": "1772000755834",
+      "title": "Online Sale",
+      "amount": 2000,
+      "type": "income",
+      "payment": "upi"
+    },
+    {
+      "id": "1772000755837",
+      "title": "Groceries",
+      "amount": 500,
+      "type": "outcome",
+      "payment": "cash"
+    },
+    {
+      "id": "1772000755840",
+      "title": "Online Purchase",
+      "amount": 300,
+      "type": "outcome",
+      "payment": "upi"
+    },
+    {
+      "id": "1772000755847",
+      "title": "Test PM",
+      "amount": 100,
+      "payment": "TestCard123"
+    },
+    {
+      "id": "1772000755850",
+      "title": "Test Cat",
+      "amount": 100,
+      "category": "Food"
+    },
+    {
+      "id": "1772001391344",
+      "title": "<script>alert(\"xss\")</script>",
+      "amount": 100
+    },
+    {
+      "id": "1772001391353",
+      "title": "",
+      "amount": 100
+    },
+    {
+      "id": "1772001391357",
+      "title": "Test",
+      "amount": -100
+    },
+    {
+      "id": "1772001391362",
+      "title": "Test",
+      "amount": 100,
+      "date": "invalid-date"
+    },
+    {
+      "id": "1772001391375",
+      "title": "Valid Expense",
+      "amount": 250,
+      "category": "Food",
+      "date": "2024-01-15"
+    },
+    {
+      "id": "1772001391378",
+      "title": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "amount": 100
+    },
+    {
+      "id": "1772001429367",
+      "title": "<script>alert(\"xss\")<&#x2F;script>",
+      "amount": 100,
+      "category": "Other",
+      "date": "2026-02-25",
+      "payment": "cash",
+      "type": "outcome",
+      "notes": "",
+      "bank": "",
+      "upiApp": ""
+    },
+    {
+      "id": "1772001429402",
+      "title": "Valid Expense",
+      "amount": 250,
+      "category": "Food",
+      "date": "2024-01-15",
+      "payment": "cash",
+      "type": "outcome",
+      "notes": "",
+      "bank": "",
+      "upiApp": ""
+    }
+  ],
+  "monthlyBudget": -1000,
+  "categories": [
+    {
+      "id": "2",
+      "icon": "fitness-outline",
+      "title": "Gym & Fitness",
+      "color": "#10b981"
+    },
+    {
+      "id": "3",
+      "icon": "paw-outline",
+      "title": "Pet Expenses",
+      "color": "#3b82f6"
+    },
+    {
+      "id": "4",
+      "icon": "fast-food-outline",
+      "title": "Food & Dining",
+      "color": "#ef4444"
+    },
+    {
+      "id": "5",
+      "icon": "car-outline",
+      "title": "Transportation",
+      "color": "#f59e0b"
+    },
+    {
+      "id": "6",
+      "icon": "bag-handle-outline",
+      "title": "Shopping",
+      "color": "#ec4899"
+    },
+    {
+      "id": "7",
+      "icon": "bulb-outline",
+      "title": "Bills & Utilities",
+      "color": "#3b82f6"
+    },
+    {
+      "id": "8",
+      "icon": "medical-outline",
+      "title": "Healthcare",
+      "color": "#22c55e"
+    },
+    {
+      "id": "9",
+      "icon": "film-outline",
+      "title": "Entertainment",
+      "color": "#8b5cf6"
+    },
+    {
+      "id": "1771841265014",
+      "icon": "cafe-outline",
+      "title": "Test",
+      "color": "#06B6D4"
+    },
+    {
+      "id": "1772000755598",
+      "title": "Test Category 0",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755600",
+      "title": "Test Category 1",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755601",
+      "title": "Test Category 2",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755604",
+      "title": "Test Category 3",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755605",
+      "title": "Test Category 4",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755607",
+      "title": "Test Category 5",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755609",
+      "title": "Test Category 6",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755611",
+      "title": "Test Category 7",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755613",
+      "title": "Test Category 8",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755615",
+      "title": "Test Category 9",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755617",
+      "title": "Test Category 10",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755619",
+      "title": "Test Category 11",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755621",
+      "title": "Test Category 12",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755622",
+      "title": "Test Category 13",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755625",
+      "title": "Test Category 14",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755627",
+      "title": "Test Category 15",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755629",
+      "title": "Test Category 16",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755631",
+      "title": "Test Category 17",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755633",
+      "title": "Test Category 18",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755635",
+      "title": "Test Category 19",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755637",
+      "title": "Test Category 20",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755639",
+      "title": "Test Category 21",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755641",
+      "title": "Test Category 22",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755643",
+      "title": "Test Category 23",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755644",
+      "title": "Test Category 24",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755647",
+      "title": "Test Category 25",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755650",
+      "title": "Test Category 26",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755652",
+      "title": "Test Category 27",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755655",
+      "title": "Test Category 28",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755657",
+      "title": "Test Category 29",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755659",
+      "title": "Test Category 30",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755661",
+      "title": "Test Category 31",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755663",
+      "title": "Test Category 32",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755666",
+      "title": "Test Category 33",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755669",
+      "title": "Test Category 34",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755672",
+      "title": "Test Category 35",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755674",
+      "title": "Test Category 36",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755676",
+      "title": "Test Category 37",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755678",
+      "title": "Test Category 38",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755680",
+      "title": "Test Category 39",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755682",
+      "title": "Test Category 40",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755684",
+      "title": "Test Category 41",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755687",
+      "title": "Test Category 42",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755689",
+      "title": "Test Category 43",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755691",
+      "title": "Test Category 44",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755693",
+      "title": "Test Category 45",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755695",
+      "title": "Test Category 46",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755697",
+      "title": "Test Category 47",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755699",
+      "title": "Test Category 48",
+      "icon": "📁",
+      "color": "#FF0000"
+    },
+    {
+      "id": "1772000755702",
+      "title": "Test Category 49",
+      "icon": "📁",
+      "color": "#FF0000"
+    }
+  ],
+  "paymentMethods": [
+    {
+      "id": "1",
+      "name": "UPI",
+      "icon": "📱"
+    },
+    {
+      "id": "2",
+      "name": "Credit Card",
+      "icon": "💳"
+    },
+    {
+      "id": "3",
+      "name": "Debit Card",
+      "icon": "💳"
+    },
+    {
+      "id": "4",
+      "name": "Cash",
+      "icon": "💵"
+    },
+    {
+      "id": "5",
+      "name": "Net Banking",
+      "icon": "🏦"
+    },
+    {
+      "id": "1772000755706",
+      "name": "Test Method 0",
+      "icon": "💳"
+    },
+    {
+      "id": "1772000755708",
+      "name": "Test Method 1",
+      "icon": "💳"
+    },
+    {
+      "id": "1772000755711",
+      "name": "Test Method 2",
+      "icon": "💳"
+    },
+    {
+      "id": "1772000755713",
+      "name": "Test Method 3",
+      "icon": "💳"
+    },
+    {
+      "id": "1772000755715",
+      "name": "Test Method 4",
+      "icon": "💳"
+    },
+    {
+      "id": "1772000755717",
+      "name": "Test Method 5",
+      "icon": "💳"
+    },
+    {
+      "id": "1772000755719",
+      "name": "Test Method 6",
+      "icon": "💳"
+    },
+    {
+      "id": "1772000755721",
+      "name": "Test Method 7",
+      "icon": "💳"
+    },
+    {
+      "id": "1772000755723",
+      "name": "Test Method 8",
+      "icon": "💳"
+    },
+    {
+      "id": "1772000755726",
+      "name": "Test Method 9",
+      "icon": "💳"
+    },
+    {
+      "id": "1772000755729",
+      "name": "Test Method 10",
+      "icon": "💳"
+    },
+    {
+      "id": "1772000755731",
+      "name": "Test Method 11",
+      "icon": "💳"
+    },
+    {
+      "id": "1772000755743",
+      "name": "Test Method 12",
+      "icon": "💳"
+    },
+    {
+      "id": "1772000755748",
+      "name": "Test Method 13",
+      "icon": "💳"
+    },
+    {
+      "id": "1772000755756",
+      "name": "Test Method 14",
+      "icon": "💳"
+    },
+    {
+      "id": "1772000755764",
+      "name": "Test Method 15",
+      "icon": "💳"
+    },
+    {
+      "id": "1772000755767",
+      "name": "Test Method 16",
+      "icon": "💳"
+    },
+    {
+      "id": "1772000755770",
+      "name": "Test Method 17",
+      "icon": "💳"
+    },
+    {
+      "id": "1772000755773",
+      "name": "Test Method 18",
+      "icon": "💳"
+    },
+    {
+      "id": "1772000755776",
+      "name": "Test Method 19",
+      "icon": "💳"
+    },
+    {
+      "id": "1772000755778",
+      "name": "Test Method 20",
+      "icon": "💳"
+    },
+    {
+      "id": "1772000755781",
+      "name": "Test Method 21",
+      "icon": "💳"
+    },
+    {
+      "id": "1772000755784",
+      "name": "Test Method 22",
+      "icon": "💳"
+    },
+    {
+      "id": "1772000755789",
+      "name": "Test Method 23",
+      "icon": "💳"
+    },
+    {
+      "id": "1772000755792",
+      "name": "Test Method 24",
+      "icon": "💳"
+    },
+    {
+      "id": "1772000755795",
+      "name": "Test Method 25",
+      "icon": "💳"
+    },
+    {
+      "id": "1772000755798",
+      "name": "Test Method 26",
+      "icon": "💳"
+    },
+    {
+      "id": "1772000755802",
+      "name": "Test Method 27",
+      "icon": "💳"
+    },
+    {
+      "id": "1772000755805",
+      "name": "Test Method 28",
+      "icon": "💳"
+    },
+    {
+      "id": "1772000755808",
+      "name": "Test Method 29",
+      "icon": "💳"
+    }
+  ],
+  "banks": [
+    {
+      "id": "1",
+      "name": "State Bank",
+      "icon": "🏦"
+    },
+    {
+      "id": "2",
+      "name": "HDFC Bank",
+      "icon": "🏦"
+    },
+    {
+      "id": "3",
+      "name": "ICICI Bank",
+      "icon": "🏦"
+    },
+    {
+      "id": "4",
+      "name": "Axis Bank",
+      "icon": "🏦"
+    },
+    {
+      "id": "5",
+      "name": "Kotak Bank",
+      "icon": "🏦"
+    },
+    {
+      "id": "6",
+      "name": "Yes Bank",
+      "icon": "🏦"
+    }
+  ],
+  "upiApps": [
+    {
+      "id": "1",
+      "name": "Paytm UPI",
+      "icon": "📱"
+    },
+    {
+      "id": "2",
+      "name": "Google Pay",
+      "icon": "📱"
+    },
+    {
+      "id": "3",
+      "name": "PhonePe",
+      "icon": "📱"
+    },
+    {
+      "id": "4",
+      "name": "Amazon Pay",
+      "icon": "📱"
+    }
+  ],
+  "preferences": {
+    "pushNotifications": false,
+    "budgetAlerts": false,
+    "darkMode": false
+  },
+  "user": {
+    "name": "Test User",
+    "email": "test@example.com"
+  },
+  "currency": "INVALID"
+}

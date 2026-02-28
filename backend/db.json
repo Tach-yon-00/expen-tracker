@@ -1,0 +1,123 @@
+{
+  "cashBalance": 0,
+  "upiBalance": 0,
+  "monthlyBudget": 0,
+  "user": {
+    "name": "User",
+    "email": "user@email.com"
+  },
+  "preferences": {
+    "pushNotifications": false,
+    "budgetAlerts": false,
+    "darkMode": false
+  },
+  "currency": "₹",
+  "expenses": [],
+  "categories": [
+    {
+      "id": "1",
+      "icon": "restaurant-outline",
+      "title": "Food & Dining",
+      "color": "#F59E0B"
+    },
+    {
+      "id": "2",
+      "icon": "car-outline",
+      "title": "Transportation",
+      "color": "#3B82F6"
+    },
+    {
+      "id": "3",
+      "icon": "cart-outline",
+      "title": "Shopping",
+      "color": "#EC4899"
+    },
+    {
+      "id": "4",
+      "icon": "home-outline",
+      "title": "Housing & Rent",
+      "color": "#2DD4BF"
+    },
+    {
+      "id": "5",
+      "icon": "medical-outline",
+      "title": "Healthcare",
+      "color": "#10B981"
+    },
+    {
+      "id": "6",
+      "icon": "film-outline",
+      "title": "Entertainment",
+      "color": "#F97316"
+    },
+    {
+      "id": "7",
+      "icon": "flash-outline",
+      "title": "Bills & Utilities",
+      "color": "#06B6D4"
+    },
+    {
+      "id": "8",
+      "icon": "briefcase-outline",
+      "title": "Salary",
+      "color": "#22C55E"
+    },
+    {
+      "id": "9",
+      "icon": "trending-up-outline",
+      "title": "Investments",
+      "color": "#0EA5E9"
+    }
+  ],
+  "paymentMethods": [
+    {
+      "id": "pm1",
+      "name": "Cash",
+      "icon": "cash-outline"
+    },
+    {
+      "id": "pm2",
+      "name": "UPI",
+      "icon": "phone-portrait-outline"
+    },
+    {
+      "id": "pm3",
+      "name": "Credit Card",
+      "icon": "card-outline"
+    }
+  ],
+  "banks": [
+    {
+      "id": "b1",
+      "name": "HDFC Bank",
+      "icon": "business-outline"
+    },
+    {
+      "id": "b2",
+      "name": "SBI",
+      "icon": "business-outline"
+    },
+    {
+      "id": "b3",
+      "name": "ICICI Bank",
+      "icon": "business-outline"
+    }
+  ],
+  "upiApps": [
+    {
+      "id": "u1",
+      "name": "Google Pay",
+      "icon": "logo-google"
+    },
+    {
+      "id": "u2",
+      "name": "PhonePe",
+      "icon": "phone-portrait-outline"
+    },
+    {
+      "id": "u3",
+      "name": "Paytm",
+      "icon": "wallet-outline"
+    }
+  ]
+}
