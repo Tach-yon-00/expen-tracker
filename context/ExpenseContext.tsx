@@ -35,6 +35,17 @@ type UpiApp = {
   icon: string;
 };
 
+export type Debt = {
+  id: string;
+  type: "owe" | "receive";
+  person: string;
+  originalAmount: number;
+  remainingAmount: number;
+  reason: string;
+  date: string;
+  status: "unsettled" | "settled";
+};
+
 type State = {
   expenses: Expense[];
   categories: Category[];
@@ -48,6 +59,7 @@ type State = {
   cashBalance: number;
   upiBalance: number;
   isPremium: boolean;
+  debts: Debt[];
 };
 
 type Action =
@@ -76,7 +88,11 @@ type Action =
   | { type: "REVERT_CATEGORIES"; payload: Category[] }
   | { type: "REVERT_BANKS"; payload: Bank[] }
   | { type: "REVERT_UPI_APPS"; payload: UpiApp[] }
-  | { type: "REVERT_PAYMENT_METHODS"; payload: PaymentMethod[] };
+  | { type: "REVERT_PAYMENT_METHODS"; payload: PaymentMethod[] }
+  | { type: "LOAD_DEBTS"; payload: Debt[] }
+  | { type: "ADD_DEBT"; payload: Debt }
+  | { type: "UPDATE_DEBT"; payload: Debt }
+  | { type: "DELETE_DEBT"; payload: string };
 
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
@@ -137,6 +153,19 @@ const reducer = (state: State, action: Action): State => {
       return { ...state, upiApps: action.payload };
     case "REVERT_PAYMENT_METHODS":
       return { ...state, paymentMethods: action.payload };
+    case "LOAD_DEBTS":
+      return { ...state, debts: action.payload };
+    case "ADD_DEBT":
+      return { ...state, debts: [action.payload, ...state.debts] };
+    case "UPDATE_DEBT":
+      return {
+        ...state,
+        debts: state.debts.map(d =>
+          d.id === action.payload.id ? action.payload : d
+        )
+      };
+    case "DELETE_DEBT":
+      return { ...state, debts: state.debts.filter(d => d.id !== action.payload) };
     default:
       return state;
   }
@@ -155,6 +184,7 @@ const initialState: State = {
   cashBalance: 0,
   upiBalance: 0,
   isPremium: false,
+  debts: [],
 };
 
 type ExpenseContextType = {
@@ -179,6 +209,9 @@ type ExpenseContextType = {
   addUpiApp: (upiApp: UpiApp) => Promise<void>;
   deleteUpiApp: (id: string) => Promise<void>;
   fetchExpenses: () => Promise<void>;
+  addDebt: (debt: Omit<Debt, "id" | "status" | "remainingAmount">) => Promise<Debt>;
+  updateDebt: (debt: Debt) => Promise<Debt>;
+  deleteDebt: (id: string) => Promise<void>;
 };
 
 export const ExpenseContext = createContext<ExpenseContextType | undefined>(undefined);
@@ -270,6 +303,14 @@ export const ExpenseProvider = ({ children }: any) => {
       dispatch({ type: "SET_BALANCES", payload: { cashBalance: balData.cashBalance || 0, upiBalance: balData.upiBalance || 0 } });
     } catch (err) {
       console.log("Failed to fetch balances:", err);
+    }
+
+    try {
+      const debtRes = await fetch(`${SERVER}/debts`, { headers: AUTH_HEADERS });
+      const debtData = await debtRes.json();
+      dispatch({ type: "LOAD_DEBTS", payload: debtData });
+    } catch (err) {
+      console.log("Failed to fetch debts:", err);
     }
   };
 
@@ -433,27 +474,22 @@ export const ExpenseProvider = ({ children }: any) => {
   };
 
   const deleteCategory = async (id: string) => {
-    // Protect default categories from deletion (by ID or common Titles)
+    // Protect default categories from deletion (by common Titles)
     const categoryToDelete = state.categories.find(c => c.id === id);
 
-    if (DEFAULT_CATEGORY_IDS.includes(id) || (categoryToDelete && PROTECTED_CATEGORY_TITLES.includes(categoryToDelete.title))) {
+    if (categoryToDelete && PROTECTED_CATEGORY_TITLES.includes(categoryToDelete.title)) {
       throw new Error("Default categories cannot be deleted");
     }
 
-    const previousCategories = [...state.categories];
-    // Optimistic update
-    dispatch({ type: "DELETE_CATEGORY", payload: id });
-
     try {
-      const res = await fetch(`${SERVER}/categories/${id}`, {
+      await fetch(`${SERVER}/categories/${id}`, {
         method: "DELETE",
         headers: AUTH_HEADERS,
       });
-      if (!res.ok) throw new Error("Server deletion failed");
+      dispatch({ type: "DELETE_CATEGORY", payload: id });
     } catch (err) {
-      console.log("Failed to delete category from server, rolling back:", err);
-      dispatch({ type: "REVERT_CATEGORIES", payload: previousCategories });
-      throw err;
+      console.log("Failed to delete category from server:", err);
+      dispatch({ type: "DELETE_CATEGORY", payload: id });
     }
   };
 
@@ -586,6 +622,80 @@ export const ExpenseProvider = ({ children }: any) => {
     }
   };
 
+  const addDebt = async (debtData: Omit<Debt, "id" | "status" | "remainingAmount">) => {
+    try {
+      const payload = {
+        ...debtData,
+        remainingAmount: debtData.originalAmount
+      };
+
+      const res = await fetch(`${SERVER}/debts`, {
+        method: "POST",
+        headers: AUTH_HEADERS,
+        body: JSON.stringify(payload)
+      });
+      const newDebt = await res.json();
+      dispatch({ type: "ADD_DEBT", payload: newDebt });
+
+      // Link to expenses
+      const expensePayload: Expense = {
+        id: Date.now().toString(),
+        title: debtData.type === "owe" ? `Borrowed from ${debtData.person}` : `Lent to ${debtData.person}`,
+        amount: debtData.originalAmount,
+        category: "Transfer",
+        date: debtData.date,
+        type: debtData.type === "owe" ? "income" : "outcome",
+        payment: "cash",
+        notes: debtData.reason || `Linked to debt with ${debtData.person}`,
+        bank: '',
+        upiApp: ''
+      };
+      await addExpense(expensePayload);
+
+      return newDebt;
+    } catch (err) {
+      console.log("Failed to add debt to server:", err);
+      const localDebt: Debt = {
+        ...debtData,
+        id: Date.now().toString(),
+        remainingAmount: debtData.originalAmount,
+        status: "unsettled"
+      };
+      dispatch({ type: "ADD_DEBT", payload: localDebt });
+      return localDebt;
+    }
+  };
+
+  const updateDebt = async (debt: Debt) => {
+    try {
+      const res = await fetch(`${SERVER}/debts/${debt.id}`, {
+        method: "PUT",
+        headers: AUTH_HEADERS,
+        body: JSON.stringify(debt)
+      });
+      const updatedDebt = await res.json();
+      dispatch({ type: "UPDATE_DEBT", payload: updatedDebt });
+      return updatedDebt;
+    } catch (err) {
+      console.log("Failed to update debt on server:", err);
+      dispatch({ type: "UPDATE_DEBT", payload: debt });
+      return debt;
+    }
+  };
+
+  const deleteDebt = async (id: string) => {
+    try {
+      await fetch(`${SERVER}/debts/${id}`, {
+        method: "DELETE",
+        headers: AUTH_HEADERS,
+      });
+      dispatch({ type: "DELETE_DEBT", payload: id });
+    } catch (err) {
+      console.log("Failed to delete debt from server:", err);
+      dispatch({ type: "DELETE_DEBT", payload: id });
+    }
+  };
+
   return (
     <ExpenseContext.Provider value={{
       state,
@@ -608,7 +718,10 @@ export const ExpenseProvider = ({ children }: any) => {
       deleteBank,
       addUpiApp,
       deleteUpiApp,
-      fetchExpenses
+      fetchExpenses,
+      addDebt,
+      updateDebt,
+      deleteDebt
     }}>
       {children}
     </ExpenseContext.Provider>

@@ -266,6 +266,43 @@ function validateBalance(balance) {
   return errors;
 }
 
+function validateDebt(debt, isUpdate = false) {
+  const errors = [];
+
+  if (!isUpdate || debt.person !== undefined) {
+    if (!debt.person || typeof debt.person !== 'string' || debt.person.trim() === '') {
+      errors.push('Person name is required');
+    } else if (debt.person.length > MAX_NAME_LENGTH) {
+      errors.push(`Person name must be less than ${MAX_NAME_LENGTH} characters`);
+    }
+  }
+
+  if (!isUpdate || debt.type !== undefined) {
+    if (!['owe', 'receive'].includes(debt.type)) {
+      errors.push('Type must be "owe" or "receive"');
+    }
+  }
+
+  if (!isUpdate || debt.originalAmount !== undefined) {
+    const amount = Number(debt.originalAmount);
+    if (isNaN(amount) || amount <= 0) {
+      errors.push('Original amount must be a positive number');
+    }
+  }
+
+  if (debt.remainingAmount !== undefined) {
+    const rAmount = Number(debt.remainingAmount);
+    if (isNaN(rAmount) || rAmount < 0) {
+      errors.push('Remaining amount must be a non-negative number');
+    }
+    if (debt.originalAmount !== undefined && rAmount > Number(debt.originalAmount)) {
+      errors.push('Remaining amount cannot be greater than original amount');
+    }
+  }
+
+  return errors;
+}
+
 // ====================
 // DATABASE HELPERS
 // ====================
@@ -816,6 +853,86 @@ app.put("/balances", async (req, res) => {
     cashBalance: db.cashBalance,
     upiBalance: db.upiBalance
   });
+});
+
+/* GET debts */
+app.get("/debts", (req, res) => {
+  const db = readDB();
+  res.json(db.debts || []);
+});
+
+/* POST new debt */
+app.post("/debts", async (req, res) => {
+  const errors = validateDebt(req.body);
+  if (errors.length > 0) {
+    return res.status(400).json({ error: errors.join(', ') });
+  }
+
+  const db = readDB();
+  if (!db.debts) { db.debts = []; }
+
+  const newDebt = {
+    id: Date.now().toString(),
+    type: req.body.type,
+    person: sanitize(req.body.person),
+    originalAmount: Number(req.body.originalAmount),
+    remainingAmount: Number(req.body.remainingAmount !== undefined ? req.body.remainingAmount : req.body.originalAmount),
+    reason: sanitize(req.body.reason) || '',
+    date: req.body.date || new Date().toISOString().split('T')[0],
+    status: req.body.remainingAmount === 0 ? "settled" : "unsettled"
+  };
+
+  db.debts.push(newDebt);
+  await writeDB(db);
+  res.json(newDebt);
+});
+
+/* PUT update debt */
+app.put("/debts/:id", async (req, res) => {
+  const errors = validateDebt(req.body, true);
+  if (errors.length > 0) {
+    return res.status(400).json({ error: errors.join(', ') });
+  }
+
+  const db = readDB();
+  if (!db.debts) { db.debts = []; }
+
+  const index = db.debts.findIndex(d => d.id === req.params.id);
+  if (index !== -1) {
+    const updated = { ...db.debts[index] };
+
+    if (req.body.type !== undefined) updated.type = req.body.type;
+    if (req.body.person !== undefined) updated.person = sanitize(req.body.person);
+    if (req.body.originalAmount !== undefined) updated.originalAmount = Number(req.body.originalAmount);
+    if (req.body.remainingAmount !== undefined) {
+      updated.remainingAmount = Number(req.body.remainingAmount);
+      updated.status = updated.remainingAmount <= 0 ? "settled" : "unsettled";
+    }
+    if (req.body.reason !== undefined) updated.reason = sanitize(req.body.reason);
+    if (req.body.date !== undefined) updated.date = sanitize(req.body.date);
+    if (req.body.status !== undefined) updated.status = req.body.status;
+
+    db.debts[index] = updated;
+    await writeDB(db);
+    res.json(db.debts[index]);
+  } else {
+    res.status(404).json({ error: "Debt not found" });
+  }
+});
+
+/* DELETE debt */
+app.delete("/debts/:id", async (req, res) => {
+  const db = readDB();
+  if (!db.debts) { db.debts = []; }
+
+  const index = db.debts.findIndex(d => d.id === req.params.id);
+  if (index !== -1) {
+    const deleted = db.debts.splice(index, 1)[0];
+    await writeDB(db);
+    res.json(deleted);
+  } else {
+    res.status(404).json({ error: "Debt not found" });
+  }
 });
 
 // Error handling middleware

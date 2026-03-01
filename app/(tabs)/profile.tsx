@@ -70,6 +70,7 @@ export default function Profile() {
 
   // New settings states
   const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [showPremiumModal, setShowPremiumModal] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -118,6 +119,27 @@ export default function Profile() {
   const [selectedColor, setSelectedColor] = useState("#FF6B6B");
   const [showCustomColor, setShowCustomColor] = useState(false);
   const [customColorInput, setCustomColorInput] = useState("#");
+
+  const handleOpenCategoryModal = () => {
+    const customCategoriesCount = state.categories.filter((cat: any) => !PROTECTED_CATEGORY_TITLES.includes(cat.title)).length;
+    if (!isPremium && customCategoriesCount >= 2) {
+      if (Platform.OS === "web") {
+        window.alert("Free users are limited to 2 custom categories. Upgrade to Premium to manage unlimited custom categories.");
+        setShowPremiumModal(true);
+      } else {
+        Alert.alert(
+          "Upgrade to Premium",
+          "Free users are limited to 2 custom categories. Upgrade to Premium to unlock unlimited custom categories and more awesome features.",
+          [
+            { text: "Cancel", style: "cancel" },
+            { text: "Learn More", onPress: () => setShowPremiumModal(true) }
+          ]
+        );
+      }
+      return;
+    }
+    setShowCategoryModal(true);
+  };
 
   // Function to apply custom color
   const applyCustomColor = () => {
@@ -225,17 +247,9 @@ export default function Profile() {
     }
 
     // PREMIUM GATING: Free users limit applied
-    const customCategoriesCount = state.categories.filter((cat) => !PROTECTED_CATEGORY_TITLES.includes(cat.title)).length;
+    const customCategoriesCount = state.categories.filter((cat: any) => !PROTECTED_CATEGORY_TITLES.includes(cat.title)).length;
 
     if (!isPremium && customCategoriesCount >= 2) {
-      Alert.alert(
-        "Upgrade to Premium",
-        "Free users are limited to 2 custom categories. Upgrade, or manage your current custom categories.",
-        [
-          { text: "Cancel", style: "cancel" },
-          { text: "Learn More", onPress: () => console.log("Navigate to Premium upgrade page") }
-        ]
-      );
       return;
     }
 
@@ -255,7 +269,6 @@ export default function Profile() {
     setShowCategoryModal(false);
   };
 
-  // Delete custom category — protect defaults
   const handleDeleteCategory = async (id: string, title: string) => {
     if (PROTECTED_CATEGORY_TITLES.includes(title)) {
       if (Platform.OS === "web") {
@@ -269,7 +282,11 @@ export default function Profile() {
     if (Platform.OS === "web") {
       const confirmed = window.confirm("Are you sure you want to delete this category?");
       if (confirmed) {
-        deleteCategory(id);
+        try {
+          await deleteCategory(id);
+        } catch (error) {
+          window.alert("Failed to delete category: Default categories cannot be deleted.");
+        }
       }
       return;
     }
@@ -282,7 +299,13 @@ export default function Profile() {
         {
           text: "Delete",
           style: "destructive",
-          onPress: async () => { deleteCategory(id); }
+          onPress: async () => {
+            try {
+              await deleteCategory(id);
+            } catch (error) {
+              Alert.alert("Error", "Failed to delete category: Default categories cannot be deleted.");
+            }
+          }
         }
       ]
     );
@@ -381,7 +404,7 @@ export default function Profile() {
               <Text style={styles.premiumTitle}>Go Premium</Text>
               <Text style={styles.premiumSub}>Unlock advanced analytics and reports</Text>
             </View>
-            <TouchableOpacity style={styles.upgradeBtn}>
+            <TouchableOpacity style={styles.upgradeBtn} onPress={() => setShowPremiumModal(true)}>
               <Text style={styles.upgradeText}>Upgrade</Text>
             </TouchableOpacity>
           </View>
@@ -393,7 +416,7 @@ export default function Profile() {
         <FadeInView delay={400}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>CATEGORIES</Text>
-            <TouchableOpacity style={styles.plusBtn} onPress={() => setShowCategoryModal(true)}>
+            <TouchableOpacity style={styles.plusBtn} onPress={handleOpenCategoryModal}>
               <Ionicons name="add" size={20} color="#fff" />
             </TouchableOpacity>
           </View>
@@ -839,6 +862,63 @@ export default function Profile() {
               </TouchableOpacity>
             </View>
           </PopIn>
+        </View>
+      </Modal>
+
+      {/* Premium Upgrade Modal */}
+      <Modal visible={showPremiumModal} transparent animationType="slide">
+        <BlurredOverlay visible={showPremiumModal} onPress={() => setShowPremiumModal(false)} />
+        <View style={styles.modalOverlay}>
+          <SlideUpView style={[styles.modalContent, { backgroundColor: COLORS.textHeader, paddingHorizontal: 28, paddingTop: 32, paddingBottom: 40 }]}>
+            <View style={styles.modalHeader}>
+              <View>
+                <Text style={{ ...TYPOGRAPHY.h1, color: "#fff", marginBottom: 2 }}>Stoic Premium</Text>
+                <Text style={{ color: COLORS.warning, fontSize: 16, fontWeight: "700" }}>$4.99 <Text style={{ fontSize: 14, color: COLORS.gray400, fontWeight: "400" }}>/ month</Text></Text>
+              </View>
+              <TouchableOpacity style={[styles.closeBtn, { backgroundColor: 'rgba(255,255,255,0.1)' }]} onPress={() => setShowPremiumModal(false)}>
+                <Ionicons name="close" size={20} color="#fff" />
+              </TouchableOpacity>
+            </View>
+
+            <View style={{ marginBottom: 30, marginTop: 10 }}>
+              <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 16, paddingBottom: 12, borderBottomWidth: 1, borderBottomColor: "rgba(255,255,255,0.1)" }}>
+                <Text style={{ color: COLORS.gray400, flex: 1, fontSize: 12, fontWeight: "700", textTransform: "uppercase", letterSpacing: 1 }}>Features</Text>
+                <Text style={{ color: COLORS.gray400, width: 70, textAlign: "center", fontSize: 12, fontWeight: "700", textTransform: "uppercase", letterSpacing: 1 }}>Free</Text>
+                <Text style={{ color: COLORS.warning, width: 70, textAlign: "center", fontSize: 12, fontWeight: "800", textTransform: "uppercase", letterSpacing: 1 }}>Pro</Text>
+              </View>
+
+              {[
+                { name: "Custom Categories", free: "2 max", pro: "Unlimited" },
+                { name: "Analytics & Insights", free: "Basic", pro: "Advanced" },
+                { name: "Data Export", free: "No", pro: "Yes" },
+                { name: "Custom Themes", free: "No", pro: "Yes" },
+                { name: "Priority Support", free: "No", pro: "Yes" }
+              ].map((feat, i) => (
+                <View key={i} style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 18, alignItems: "center" }}>
+                  <Text style={{ color: "#fff", flex: 1, fontSize: 15, fontWeight: "500" }}>{feat.name}</Text>
+                  <Text style={{ color: COLORS.gray300, width: 70, textAlign: "center", fontSize: 14 }}>{feat.free}</Text>
+                  <View style={{ width: 70, alignItems: "center" }}>
+                    <Text style={{ color: COLORS.warning, fontSize: 14, fontWeight: "800" }}>{feat.pro}</Text>
+                  </View>
+                </View>
+              ))}
+            </View>
+
+            <ScalePressable
+              style={{ backgroundColor: COLORS.warning, padding: 18, borderRadius: 20, alignItems: "center", ...SHADOWS.md }}
+              onPress={() => {
+                setShowPremiumModal(false);
+                if (Platform.OS === "web") {
+                  window.alert("Proceeding to payment processor...");
+                } else {
+                  Alert.alert("Redirecting", "Proceeding to payment processor...");
+                }
+              }}
+            >
+              <Text style={{ color: COLORS.textHeader, fontWeight: "800", fontSize: 16, letterSpacing: 0.5 }}>Upgrade Now</Text>
+            </ScalePressable>
+            <Text style={{ color: COLORS.gray400, fontSize: 12, textAlign: "center", marginTop: 16 }}>Cancel anytime. Read our Terms of Service.</Text>
+          </SlideUpView>
         </View>
       </Modal>
     </View >

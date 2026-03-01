@@ -12,7 +12,80 @@
     "darkMode": false
   },
   "currency": "₹",
-  "expenses": [],
+  "expenses": [
+    {
+      "id": "1772303129190",
+      "title": "OYO",
+      "amount": 50,
+      "category": "Bills &amp; Utilities",
+      "date": "2026-02-28",
+      "payment": "Credit Card",
+      "type": "outcome",
+      "notes": "Gand mari",
+      "bank": "",
+      "upiApp": ""
+    },
+    {
+      "id": "1772303901939",
+      "title": "Kya be",
+      "amount": 5000,
+      "category": "Hold my bear",
+      "date": "2026-02-28",
+      "payment": "Cash",
+      "type": "outcome",
+      "notes": "",
+      "bank": "",
+      "upiApp": ""
+    },
+    {
+      "id": "1772349480028",
+      "title": "Borrowed from John",
+      "amount": 50,
+      "category": "Transfer",
+      "date": "2026-03-01",
+      "payment": "cash",
+      "type": "income",
+      "notes": "Linked to debt with John",
+      "bank": "",
+      "upiApp": ""
+    },
+    {
+      "id": "1772349528043",
+      "title": "Borrowed from TERER",
+      "amount": 8000,
+      "category": "Transfer",
+      "date": "2026-03-01",
+      "payment": "cash",
+      "type": "income",
+      "notes": "DINNER",
+      "bank": "",
+      "upiApp": ""
+    },
+    {
+      "id": "1772349551272",
+      "title": "Lent to siNNER",
+      "amount": 1000,
+      "category": "Transfer",
+      "date": "2026-03-01",
+      "payment": "cash",
+      "type": "outcome",
+      "notes": "CAb",
+      "bank": "",
+      "upiApp": ""
+    },
+    {
+      "id": "1772349564590",
+      "title": "Lent to WERY",
+      "amount": 8520,
+      "category": "Transfer",
+      "date": "2026-03-01",
+      "payment": "cash",
+      "type": "outcome",
+      "notes": "VGH",
+      "bank": "",
+      "upiApp": ""
+    }
+  ],
   "categories": [
     {
       "id": "1",
@@ -67,6 +140,12 @@
       "icon": "trending-up-outline",
       "title": "Investments",
       "color": "#0EA5E9"
+    },
+    {
+      "id": "1772303861371",
+      "title": "Hold my bear",
+      "icon": "beer-outline",
+      "color": "#FF6B6B"
     }
   ],
   "paymentMethods": [
@@ -118,6 +197,48 @@
       "id": "u3",
       "name": "Paytm",
       "icon": "wallet-outline"
+    }
+  ],
+  "debts": [
+    {
+      "id": "1772349480005",
+      "type": "owe",
+      "person": "John",
+      "originalAmount": 50,
+      "remainingAmount": 50,
+      "reason": "",
+      "date": "2026-03-01",
+      "status": "unsettled"
+    },
+    {
+      "id": "1772349528016",
+      "type": "owe",
+      "person": "TERER",
+      "originalAmount": 8000,
+      "remainingAmount": 8000,
+      "reason": "DINNER",
+      "date": "2026-03-01",
+      "status": "unsettled"
+    },
+    {
+      "id": "1772349551226",
+      "type": "receive",
+      "person": "siNNER",
+      "originalAmount": 1000,
+      "remainingAmount": 1000,
+      "reason": "CAb",
+      "date": "2026-03-01",
+      "status": "unsettled"
+    },
+    {
+      "id": "1772349564542",
+      "type": "receive",
+      "person": "WERY",
+      "originalAmount": 8520,
+      "remainingAmount": 8520,
+      "reason": "VGH",
+      "date": "2026-03-01",
+      "status": "unsettled"
     }
   ]
 }

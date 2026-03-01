@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
-import { Animated, Pressable, ViewStyle, StyleProp, Easing, LayoutAnimation, Platform, UIManager, StyleSheet } from "react-native";
 import { BlurView } from "expo-blur";
+import React, { useEffect, useRef, useState } from "react";
+import { Animated, Easing, Platform, Pressable, StyleProp, StyleSheet, UIManager, ViewStyle } from "react-native";
 
 // Enable LayoutAnimation on Android
 if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -96,11 +96,13 @@ export const ScalePressable: React.FC<{
     onPress: () => void;
     style?: StyleProp<ViewStyle>;
     activeOpacity?: number;
-}> = ({ children, onPress, style, activeOpacity = 0.9 }) => {
+    disabled?: boolean;
+}> = ({ children, onPress, style, activeOpacity = 0.9, disabled = false }) => {
     const scaleAnim = useRef(new Animated.Value(1)).current;
     const [isPressed, setIsPressed] = useState(false);
 
     const handlePressIn = () => {
+        if (disabled) return;
         setIsPressed(true);
         Animated.spring(scaleAnim, {
             toValue: 0.95,
@@ -111,6 +113,7 @@ export const ScalePressable: React.FC<{
     };
 
     const handlePressOut = () => {
+        if (disabled) return;
         setIsPressed(false);
         Animated.spring(scaleAnim, {
             toValue: 1,
@@ -122,9 +125,10 @@ export const ScalePressable: React.FC<{
 
     return (
         <Pressable
-            onPress={onPress}
+            onPress={disabled ? undefined : onPress}
             onPressIn={handlePressIn}
             onPressOut={handlePressOut}
+            disabled={disabled}
         >
             <Animated.View style={[
                 style,
