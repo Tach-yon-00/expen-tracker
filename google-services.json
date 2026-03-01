@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "394310536101",
+    "project_id": "expense-app-4388c",
+    "storage_bucket": "expense-app-4388c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:394310536101:android:fcfd377271e3fc0bbef64c",
+        "android_client_info": {
+          "package_name": "com.yochanbalekaje.stoic"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAN3wOVIUrZCKLQBzQiwxKA9jNEAYtJJtU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

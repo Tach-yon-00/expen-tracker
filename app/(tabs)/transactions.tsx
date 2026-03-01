@@ -4,6 +4,7 @@ import { useRouter } from "expo-router";
 import { useMemo, useState } from "react";
 import {
   Alert,
+  Keyboard,
   Modal,
   ScrollView,
   StyleSheet,
@@ -11,14 +12,13 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  Keyboard,
 } from "react-native";
+import { BlurredOverlay, FadeInView, ScalePressable, SlideInRow, SlideUpView } from "../../components/Animations";
 import { showToast } from "../../components/Toast";
-import { useExpenses } from "../../context/ExpenseContext";
 import { COLORS } from "../../constants/theme";
-import { FadeInView, SlideInRow, ScalePressable, PopIn, BlurredOverlay, SlideUpView } from "../../components/Animations";
-import { formatDateDisplay } from "../../utils/config";
+import { useExpenses } from "../../context/ExpenseContext";
 import { getCategoryBranding } from "../../utils/categoryUtils";
+import { formatDateDisplay } from "../../utils/config";
 
 
 const fallbackConfig = { color: "#9CA3AF", icon: "ellipsis-horizontal-outline" as keyof typeof Ionicons.glyphMap, bg: "#F3F4F6" };
@@ -90,29 +90,53 @@ export default function TransactionsScreen() {
     return { icon: "💳", name: payment };
   };
 
-  // Filter expenses based on search and keyword
-  const filteredExpenses = state.expenses.filter((expense: any) => {
-    const searchLower = searchQuery.toLowerCase();
-    const amountStr = expense.amount?.toString() || "";
-    const matchesSearch = searchQuery === "" ||
-      expense.title?.toLowerCase().includes(searchLower) ||
-      expense.category?.toLowerCase().includes(searchLower) ||
-      amountStr.includes(searchLower) ||
-      (searchLower.startsWith("₹") && amountStr.includes(searchLower.replace("₹", ""))) ||
-      (searchLower.startsWith("$") && amountStr.includes(searchLower.replace("$", "")));
+  // Combine expenses and debts for timeline view
+  const combinedTransactions = useMemo(() => {
+    // 1. Process expenses
+    const processedExpenses = state.expenses
+      .filter((expense: any) => {
+        const searchLower = searchQuery.toLowerCase();
+        const amountStr = expense.amount?.toString() || "";
+        const matchesSearch = searchQuery === "" ||
+          expense.title?.toLowerCase().includes(searchLower) ||
+          expense.category?.toLowerCase().includes(searchLower) ||
+          amountStr.includes(searchLower) ||
+          (searchLower.startsWith("₹") && amountStr.includes(searchLower.replace("₹", ""))) ||
+          (searchLower.startsWith("$") && amountStr.includes(searchLower.replace("$", "")));
 
-    const matchesKeyword = !selectedKeyword ||
-      expense.category?.toLowerCase() === selectedKeyword.toLowerCase();
+        const matchesKeyword = !selectedKeyword ||
+          expense.category?.toLowerCase() === selectedKeyword.toLowerCase();
 
-    return matchesSearch && matchesKeyword;
-  });
+        return matchesSearch && matchesKeyword;
+      })
+      .map((e: any) => ({ ...e, _isDebt: false }));
 
-  // Sort by date (newest first)
-  const sortedExpenses = [...filteredExpenses].sort((a: any, b: any) => {
-    const dateA = new Date(a.date || Date.now());
-    const dateB = new Date(b.date || Date.now());
-    return dateB.getTime() - dateA.getTime();
-  });
+    // 2. Process debts
+    const processedDebts = (state.debts || [])
+      .filter((debt: any) => {
+        const searchLower = searchQuery.toLowerCase();
+        const amountStr = debt.originalAmount?.toString() || "";
+        const titleStr = `Debt: ${debt.person}`;
+        const matchesSearch = searchQuery === "" ||
+          titleStr.toLowerCase().includes(searchLower) ||
+          debt.person?.toLowerCase().includes(searchLower) ||
+          amountStr.includes(searchLower) ||
+          (searchLower.startsWith("₹") && amountStr.includes(searchLower.replace("₹", "")));
+
+        // Debts show under a virtual 'Ledger' or 'Debt' keyword if desired, otherwise always show if no keyword
+        const matchesKeyword = !selectedKeyword || selectedKeyword.toLowerCase() === "ledger" || selectedKeyword.toLowerCase() === "debt";
+
+        return matchesSearch && matchesKeyword;
+      })
+      .map((d: any) => ({ ...d, _isDebt: true, amount: d.originalAmount, title: `${d.type === 'owe' ? 'Borrowed from' : 'Lent to'} ${d.person}`, category: 'Ledger' }));
+
+    // 3. Combine and sort
+    return [...processedExpenses, ...processedDebts].sort((a: any, b: any) => {
+      const dateA = new Date(a.date || Date.now());
+      const dateB = new Date(b.date || Date.now());
+      return dateB.getTime() - dateA.getTime();
+    });
+  }, [state.expenses, state.debts, searchQuery, selectedKeyword]);
 
   const handleKeywordPress = (keyword: string) => {
     setSelectedKeyword(selectedKeyword === keyword ? null : keyword);
@@ -268,7 +292,7 @@ export default function TransactionsScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.txList}
       >
-        {sortedExpenses.length === 0 ? (
+        {combinedTransactions.length === 0 ? (
           <View style={styles.emptyState}>
             <Ionicons name={searchQuery || selectedKeyword ? "search-outline" : "receipt-outline"} size={50} color="#cbd5e1" />
             <Text style={styles.emptyText}>
@@ -278,9 +302,9 @@ export default function TransactionsScreen() {
         ) : (
           (() => {
             let lastDateLabel = "";
-            return sortedExpenses.map((item: any, index: number) => {
-              const cfg = getCategoryConfigByName(item.category);
-              const isIncome = item.type === "income";
+            return combinedTransactions.map((item: any, index: number) => {
+              const cfg = item._isDebt ? { icon: "swap-horizontal-outline", color: "#3b82f6", bg: "#eff6ff" } : getCategoryConfigByName(item.category);
+              const isIncome = item._isDebt ? item.type === "owe" : item.type === "income";
               const dateLabel = formatDateDisplay(item.date);
               const showHeader = dateLabel !== lastDateLabel;
               lastDateLabel = dateLabel;
@@ -294,23 +318,23 @@ export default function TransactionsScreen() {
                   )}
                   <ScalePressable
                     style={styles.txRow}
-                    onPress={() => setSelectedTransaction(item)}
+                    onPress={() => item._isDebt ? null : setSelectedTransaction(item)}
                   >
                     <View style={[styles.txIconContainer, { backgroundColor: cfg.bg }]}>
-                      <Ionicons name={cfg.icon} size={22} color={cfg.color} />
+                      <Ionicons name={cfg.icon as any} size={22} color={cfg.color} />
                     </View>
 
                     <View style={{ flex: 1 }}>
                       <Text style={styles.txTitle}>
-                        {item.title || item.description || `${item.category} Expense`}
+                        {item._isDebt ? item.title : (item.title || item.description || `${item.category} Expense`)}
                       </Text>
                       <Text style={styles.txMetaRow}>
-                        {item.category || "Others"} · {formatDateDisplay(item.date)}
+                        {item._isDebt ? (item.reason || "Debt Record") : (item.category || "Others")} · {formatDateDisplay(item.date)}
                       </Text>
                     </View>
 
-                    <Text style={[styles.txAmount, { color: isIncome ? "#22c55e" : "#ef4444" }]}>
-                      {isIncome ? "+" : "-"}{CURRENCY}{Number(item.amount || 0).toFixed(2)}
+                    <Text style={[styles.txAmount, { color: item._isDebt ? "#3b82f6" : (isIncome ? "#22c55e" : "#ef4444") }]}>
+                      {item._isDebt ? "" : (isIncome ? "+" : "-")}{CURRENCY}{Number(item.amount || 0).toFixed(2)}
                     </Text>
                   </ScalePressable>
                 </SlideInRow>

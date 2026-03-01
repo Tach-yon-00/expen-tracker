@@ -6,6 +6,16 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import ToastProvider from "../components/Toast";
 import { ExpenseProvider } from "../context/ExpenseContext";
 import { isOnboardingDone } from "../storage/onboarding";
+import {
+  getFCMToken,
+  requestUserPermission,
+  setupBackgroundMessageHandler,
+  setupForegroundMessageHandler
+} from "../utils/firebaseNotifications";
+
+// Initialize the Firebase Background Message Handler globally (outside React Lifecycle)
+// This is strictly required for Android to process notifications when the app is killed/closed for a long time.
+setupBackgroundMessageHandler();
 
 // Ignore generic React Native Warnings that pollute the console
 LogBox.ignoreLogs([
@@ -33,6 +43,20 @@ export default function RootLayout() {
       }
     };
     checkOnboarding();
+
+    // --- Firebase Push Notification Setup ---
+    const initPushNotifications = async () => {
+      await requestUserPermission();
+      await getFCMToken(); // Fetches and logs the token
+    };
+
+    initPushNotifications();
+    const unsubscribeForeground = setupForegroundMessageHandler();
+
+    // Cleanup listener on unmount
+    return () => {
+      if (unsubscribeForeground) unsubscribeForeground();
+    };
   }, []);
 
   // Show neutral loading gate - blocks tabs/dashboard from rendering

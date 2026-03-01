@@ -280,6 +280,10 @@ export default function AnalyticsScreen() {
   const isCurrentMonth = selectedMonth === now.getMonth() && selectedYear === now.getFullYear();
   const hasNoData = dailyData.total === 0;
 
+  const debts = state.debts || [];
+  const youOwe = debts.filter((d: any) => d.type === "owe").reduce((sum: number, d: any) => sum + d.remainingAmount, 0);
+  const receivable = debts.filter((d: any) => d.type === "receive").reduce((sum: number, d: any) => sum + d.remainingAmount, 0);
+
   return (
     <View style={s.screen}>
       <Animated.ScrollView ref={scrollRef} showsVerticalScrollIndicator={false} onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: navVisibility } } }], { useNativeDriver: false })} scrollEventThrottle={16} contentContainerStyle={s.scroll}>
@@ -358,6 +362,19 @@ export default function AnalyticsScreen() {
                 </View>
               </View>
               <View style={s.totalBalance}><Text style={s.totalLabel}>Total Balance</Text><Text style={s.totalAmount}>{state.currency || "₹"}{((state.cashBalance || 0) + (state.upiBalance || 0)).toLocaleString("en-IN")}</Text></View>
+            </View>
+            <View style={s.card}>
+              <View style={s.cardHeader}><Text style={s.cardTitle}>Debt & Receivables</Text></View>
+              <View style={s.balanceRow}>
+                <View style={s.balanceItem}>
+                  <View style={[s.balanceIcon, { backgroundColor: "#FEF2F2", width: responsiveIconSize, height: responsiveIconSize }]}><Ionicons name="arrow-down-outline" size={Math.round(responsiveIconSize * 0.5)} color="#EF4444" /></View>
+                  <View style={{ gap: responsiveGap * 0.3 }}><Text style={[s.balanceLabel, { fontSize: responsiveLabelSize }]}>You Owe</Text><Text style={[s.balanceAmount, { fontSize: responsiveFontSize }]}>{state.currency || "₹"}{youOwe.toLocaleString("en-IN")}</Text></View>
+                </View>
+                <View style={s.balanceItem}>
+                  <View style={[s.balanceIcon, { backgroundColor: "#ECFDF5", width: responsiveIconSize, height: responsiveIconSize }]}><Ionicons name="arrow-up-outline" size={Math.round(responsiveIconSize * 0.5)} color="#10B981" /></View>
+                  <View style={{ gap: responsiveGap * 0.3 }}><Text style={[s.balanceLabel, { fontSize: responsiveLabelSize }]}>Receivable</Text><Text style={[s.balanceAmount, { fontSize: responsiveFontSize }]}>{state.currency || "₹"}{receivable.toLocaleString("en-IN")}</Text></View>
+                </View>
+              </View>
             </View>
           </FadeInView>
         )}

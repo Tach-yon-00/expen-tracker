@@ -24,22 +24,27 @@ const fallbackConfig = { color: "#9CA3AF", icon: "ellipsis-horizontal-outline" a
 export default function AddScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
-  const { state, addExpense, updateExpense } = useExpenses();
+  const { state, addExpense, updateExpense, addDebt } = useExpenses();
   const CURRENCY = state.currency || "₹";
   const scrollRef = useRef<ScrollView>(null);
 
-  // Transaction type: 'income' or 'outcome'
-  const [transactionType, setTransactionType] = useState<"income" | "outcome">("outcome");
+  // Transaction type: 'income', 'outcome', or 'ledger'
+  const [transactionType, setTransactionType] = useState<"income" | "outcome" | "ledger">("outcome");
 
   const [amount, setAmount] = useState("");
   const [title, setTitle] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Food");
-  // Fix: Display date in DD/MM/YYYY format
+  // Default to today's date formatted as DD/MM/YYYY
   const [selectedDate, setSelectedDate] = useState(isoToDisplay(new Date().toISOString().split('T')[0]));
   const [paymentMethod, setPaymentMethod] = useState("UPI");
   const [notes, setNotes] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [expenseId, setExpenseId] = useState<string | null>(null);
+
+  // Ledger specific state
+  const [debtType, setDebtType] = useState<"owe" | "receive">("owe");
+  const [debtPerson, setDebtPerson] = useState("");
+  const [debtReason, setDebtReason] = useState("");
 
   // Income specific state
   const [incomePaymentMethod, setIncomePaymentMethod] = useState<"cash" | "netbanking">("cash");
@@ -109,6 +114,32 @@ export default function AddScreen() {
       return;
     }
 
+    if (transactionType === "ledger") {
+      if (!debtPerson.trim()) {
+        Alert.alert("Error", "Please enter the person's name");
+        return;
+      }
+      try {
+        await addDebt({
+          type: debtType,
+          person: debtPerson.trim(),
+          originalAmount: parseFloat(amount),
+          reason: debtReason.trim(),
+          date: displayToIso(selectedDate),
+        });
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        showToast({ message: "✓ Ledger entry saved", type: "success" });
+        if (router.canGoBack()) {
+          router.back();
+        } else {
+          router.replace("/");
+        }
+      } catch (error) {
+        Alert.alert("Error", "Failed to save ledger entry");
+      }
+      return;
+    }
+
     // Validate payment method is selected for both income and expense
     if (transactionType === "outcome") {
       if (!paymentMethod) {
@@ -166,7 +197,7 @@ export default function AddScreen() {
     }
   };
 
-  const handleTypeChange = (type: "income" | "outcome") => {
+  const handleTypeChange = (type: "income" | "outcome" | "ledger") => {
     setTransactionType(type);
     // Reset form when switching types
     if (type === "income") {
@@ -210,7 +241,7 @@ export default function AddScreen() {
         >
           <Ionicons
             name="arrow-down-circle-outline"
-            size={20}
+            size={18}
             color={transactionType === "outcome" ? "#fff" : "#ef4444"}
           />
           <Text style={[styles.toggleText, transactionType === "outcome" ? styles.toggleTextActive : { color: "#ef4444" }]}>
@@ -223,11 +254,24 @@ export default function AddScreen() {
         >
           <Ionicons
             name="trending-up"
-            size={20}
+            size={18}
             color={transactionType === "income" ? "#fff" : "#22c55e"}
           />
           <Text style={[styles.toggleText, transactionType === "income" ? styles.toggleTextActive : { color: "#22c55e" }]}>
             Income
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.toggleBtn, transactionType === "ledger" ? styles.toggleBtnActiveLedger : styles.toggleBtnInactive]}
+          onPress={() => handleTypeChange("ledger")}
+        >
+          <Ionicons
+            name="book"
+            size={18}
+            color={transactionType === "ledger" ? "#fff" : "#3b82f6"}
+          />
+          <Text style={[styles.toggleText, transactionType === "ledger" ? styles.toggleTextActive : { color: "#3b82f6" }]}>
+            Ledger
           </Text>
         </TouchableOpacity>
       </View>
@@ -238,11 +282,11 @@ export default function AddScreen() {
           <View style={styles.card}>
             <Text style={styles.cardLabel}>Amount</Text>
             <View style={styles.amountInputContainer}>
-              <Text style={[styles.currencySymbol, transactionType === "income" && styles.currencySymbolIncome]}>
+              <Text style={[styles.currencySymbol, transactionType === "income" && styles.currencySymbolIncome, transactionType === "ledger" && styles.currencySymbolLedger]}>
                 {CURRENCY}
               </Text>
               <TextInput
-                style={[styles.amountInput, transactionType === "income" && styles.amountInputIncome]}
+                style={[styles.amountInput, transactionType === "income" && styles.amountInputIncome, transactionType === "ledger" && styles.amountInputLedger]}
                 value={amount}
                 onChangeText={setAmount}
                 keyboardType="decimal-pad"
@@ -254,19 +298,63 @@ export default function AddScreen() {
           </View>
         </SlideInRow>
 
+        {/* LEDGER SPECIFIC: Type of Debt */}
+        {transactionType === "ledger" && (
+          <SlideInRow delay={150} direction="bottom">
+            <View style={styles.card}>
+              <Text style={styles.cardLabel}>Type</Text>
+              <View style={styles.optionsGrid}>
+                <TouchableOpacity
+                  style={[styles.optionBtn, debtType === "owe" && { backgroundColor: "#ef4444" }]}
+                  onPress={() => setDebtType("owe")}
+                >
+                  <Ionicons name="arrow-down-outline" size={18} color={debtType === "owe" ? "#fff" : "#ef4444"} />
+                  <Text style={[styles.optionText, debtType === "owe" && { color: "#fff" }, debtType !== "owe" && { color: "#ef4444" }]}>I Borrowed</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.optionBtn, debtType === "receive" && { backgroundColor: "#22c55e" }]}
+                  onPress={() => setDebtType("receive")}
+                >
+                  <Ionicons name="arrow-up-outline" size={18} color={debtType === "receive" ? "#fff" : "#22c55e"} />
+                  <Text style={[styles.optionText, debtType === "receive" && { color: "#fff" }, debtType !== "receive" && { color: "#22c55e" }]}>I Lent</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </SlideInRow>
+        )}
+
+        {/* LEDGER SPECIFIC: Person Name */}
+        {transactionType === "ledger" && (
+          <SlideInRow delay={200} direction="bottom">
+            <View style={styles.card}>
+              <Text style={styles.cardLabel}>Who is this with?</Text>
+              <TextInput
+                style={styles.textInput}
+                value={debtPerson}
+                onChangeText={setDebtPerson}
+                placeholder="Name or phone"
+                placeholderTextColor="#94a3b8"
+                autoCapitalize="words"
+              />
+            </View>
+          </SlideInRow>
+        )}
+
         {/* TITLE CARD */}
-        <SlideInRow delay={200} direction="bottom">
-          <View style={styles.card}>
-            <Text style={styles.cardLabel}>Title (Optional)</Text>
-            <TextInput
-              style={styles.textInput}
-              value={title}
-              onChangeText={setTitle}
-              placeholder={transactionType === "income" ? "e.g., Salary, Freelance" : "Enter title"}
-              placeholderTextColor="#94a3b8"
-            />
-          </View>
-        </SlideInRow>
+        {transactionType !== "ledger" && (
+          <SlideInRow delay={200} direction="bottom">
+            <View style={styles.card}>
+              <Text style={styles.cardLabel}>Title (Optional)</Text>
+              <TextInput
+                style={styles.textInput}
+                value={title}
+                onChangeText={setTitle}
+                placeholder={transactionType === "income" ? "e.g., Salary, Freelance" : "Enter title"}
+                placeholderTextColor="#94a3b8"
+              />
+            </View>
+          </SlideInRow>
+        )}
 
         {/* INCOME SPECIFIC: Payment Received Method */}
         {transactionType === "income" && (
@@ -383,51 +471,53 @@ export default function AddScreen() {
         )}
 
         {/* CATEGORY CARD */}
-        <SlideInRow delay={300} direction="bottom">
-          <View style={styles.card}>
-            <Text style={styles.cardLabel}>Category</Text>
+        {transactionType !== "ledger" && (
+          <SlideInRow delay={300} direction="bottom">
+            <View style={styles.card}>
+              <Text style={styles.cardLabel}>Category</Text>
 
-            {/* Category Preview */}
-            <View style={styles.categoryPreview}>
-              <View style={[styles.categoryPreviewIcon, { backgroundColor: selectedCategoryConfig.bg }]}>
-                <Ionicons name={selectedCategoryConfig.icon} size={28} color={selectedCategoryConfig.color} />
+              {/* Category Preview */}
+              <View style={styles.categoryPreview}>
+                <View style={[styles.categoryPreviewIcon, { backgroundColor: selectedCategoryConfig.bg }]}>
+                  <Ionicons name={selectedCategoryConfig.icon} size={28} color={selectedCategoryConfig.color} />
+                </View>
+                <Text style={styles.categoryPreviewText}>{selectedCategory}</Text>
               </View>
-              <Text style={styles.categoryPreviewText}>{selectedCategory}</Text>
-            </View>
 
-            {/* Category Options with Icons */}
-            <View style={styles.optionsGrid}>
-              {(transactionType === "income" ? incomeCategories : categories).map((cat: string) => {
-                const cfg = getCategoryBranding(cat, state.categories || []);
-                const isSelected = selectedCategory === cat;
-                return (
-                  <TouchableOpacity
-                    key={cat}
-                    style={[
-                      styles.optionBtn,
-                      isSelected && { borderColor: cfg.color, borderWidth: 2, backgroundColor: cfg.bg }
-                    ]}
-                    onPress={() => setSelectedCategory(cat)}
-                  >
-                    {isSelected && <Ionicons name="checkmark-circle" size={14} color={cfg.color} style={{ marginRight: 2 }} />}
-                    <Ionicons
-                      name={cfg.icon}
-                      size={16}
-                      color={isSelected ? cfg.color : COLORS.gray400}
-                      style={styles.categoryIcon}
-                    />
-                    <Text style={[
-                      styles.optionText,
-                      isSelected && { color: cfg.color, fontWeight: "700" }
-                    ]}>
-                      {cat}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
+              {/* Category Options with Icons */}
+              <View style={styles.optionsGrid}>
+                {(transactionType === "income" ? incomeCategories : categories).map((cat: string) => {
+                  const cfg = getCategoryBranding(cat, state.categories || []);
+                  const isSelected = selectedCategory === cat;
+                  return (
+                    <TouchableOpacity
+                      key={cat}
+                      style={[
+                        styles.optionBtn,
+                        isSelected && { borderColor: cfg.color, borderWidth: 2, backgroundColor: cfg.bg }
+                      ]}
+                      onPress={() => setSelectedCategory(cat)}
+                    >
+                      {isSelected && <Ionicons name="checkmark-circle" size={14} color={cfg.color} style={{ marginRight: 2 }} />}
+                      <Ionicons
+                        name={cfg.icon}
+                        size={16}
+                        color={isSelected ? cfg.color : COLORS.gray400}
+                        style={styles.categoryIcon}
+                      />
+                      <Text style={[
+                        styles.optionText,
+                        isSelected && { color: cfg.color, fontWeight: "700" }
+                      ]}>
+                        {cat}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
             </View>
-          </View>
-        </SlideInRow>
+          </SlideInRow>
+        )}
 
         {/* OUTCOME SPECIFIC: PAYMENT METHOD CARD */}
         {transactionType === "outcome" && (
@@ -478,12 +568,12 @@ export default function AddScreen() {
 
         {/* NOTES CARD */}
         <View style={styles.card}>
-          <Text style={styles.cardLabel}>Notes (Optional)</Text>
+          <Text style={styles.cardLabel}>{transactionType === "ledger" ? "Reason (Optional)" : "Notes (Optional)"}</Text>
           <TextInput
             style={[styles.textInput, styles.notesInput]}
-            value={notes}
-            onChangeText={setNotes}
-            placeholder="Add notes..."
+            value={transactionType === "ledger" ? debtReason : notes}
+            onChangeText={transactionType === "ledger" ? setDebtReason : setNotes}
+            placeholder={transactionType === "ledger" ? "e.g. Dinner, Cab fare" : "Add notes..."}
             placeholderTextColor="#94a3b8"
             multiline
             numberOfLines={4}
@@ -496,12 +586,13 @@ export default function AddScreen() {
           <ScalePressable
             style={[
               styles.saveButton,
-              transactionType === "income" && styles.saveButtonIncome
+              transactionType === "income" && styles.saveButtonIncome,
+              transactionType === "ledger" && styles.saveButtonLedger
             ]}
             onPress={handleSave}
           >
             <Text style={styles.saveButtonText}>
-              {isEditing ? "Update Transaction" : (transactionType === "income" ? "Save Income" : "Add Expense")}
+              {isEditing ? "Update Transaction" : (transactionType === "income" ? "Save Income" : (transactionType === "ledger" ? "Save Entry" : "Add Expense"))}
             </Text>
           </ScalePressable>
         </PopIn>
@@ -574,8 +665,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#22c55e",
   },
 
+  toggleBtnActiveLedger: {
+    backgroundColor: "#3b82f6",
+  },
+
   toggleText: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "600",
     color: "#64748b",
   },
@@ -614,6 +709,10 @@ const styles = StyleSheet.create({
     color: "#22c55e",
   },
 
+  currencySymbolLedger: {
+    color: "#3b82f6",
+  },
+
   amountInput: {
     flex: 1,
     fontSize: 32,
@@ -624,6 +723,10 @@ const styles = StyleSheet.create({
 
   amountInputIncome: {
     color: "#22c55e",
+  },
+
+  amountInputLedger: {
+    color: "#3b82f6",
   },
 
   textInput: {
@@ -743,6 +846,10 @@ const styles = StyleSheet.create({
 
   saveButtonIncome: {
     backgroundColor: "#22c55e",
+  },
+
+  saveButtonLedger: {
+    backgroundColor: "#3b82f6",
   },
 
   saveButtonText: {

@@ -1,91 +1,18 @@
 {
   "cashBalance": 0,
   "upiBalance": 0,
-  "monthlyBudget": 0,
+  "monthlyBudget": 5000,
   "user": {
-    "name": "User",
-    "email": "user@email.com"
+    "name": "Yochan",
+    "email": "yochan@example.com"
   },
   "preferences": {
-    "pushNotifications": false,
+    "pushNotifications": true,
     "budgetAlerts": false,
     "darkMode": false
   },
   "currency": "₹",
-  "expenses": [
-    {
-      "id": "1772303129190",
-      "title": "OYO",
-      "amount": 50,
-      "category": "Bills &amp; Utilities",
-      "date": "2026-02-28",
-      "payment": "Credit Card",
-      "type": "outcome",
-      "notes": "Gand mari",
-      "bank": "",
-      "upiApp": ""
-    },
-    {
-      "id": "1772303901939",
-      "title": "Kya be",
-      "amount": 5000,
-      "category": "Hold my bear",
-      "date": "2026-02-28",
-      "payment": "Cash",
-      "type": "outcome",
-      "notes": "",
-      "bank": "",
-      "upiApp": ""
-    },
-    {
-      "id": "1772349480028",
-      "title": "Borrowed from John",
-      "amount": 50,
-      "category": "Transfer",
-      "date": "2026-03-01",
-      "payment": "cash",
-      "type": "income",
-      "notes": "Linked to debt with John",
-      "bank": "",
-      "upiApp": ""
-    },
-    {
-      "id": "1772349528043",
-      "title": "Borrowed from TERER",
-      "amount": 8000,
-      "category": "Transfer",
-      "date": "2026-03-01",
-      "payment": "cash",
-      "type": "income",
-      "notes": "DINNER",
-      "bank": "",
-      "upiApp": ""
-    },
-    {
-      "id": "1772349551272",
-      "title": "Lent to siNNER",
-      "amount": 1000,
-      "category": "Transfer",
-      "date": "2026-03-01",
-      "payment": "cash",
-      "type": "outcome",
-      "notes": "CAb",
-      "bank": "",
-      "upiApp": ""
-    },
-    {
-      "id": "1772349564590",
-      "title": "Lent to WERY",
-      "amount": 8520,
-      "category": "Transfer",
-      "date": "2026-03-01",
-      "payment": "cash",
-      "type": "outcome",
-      "notes": "VGH",
-      "bank": "",
-      "upiApp": ""
-    }
-  ],
+  "expenses": [],
   "categories": [
     {
       "id": "1",
@@ -142,10 +69,22 @@
       "color": "#0EA5E9"
     },
     {
-      "id": "1772303861371",
-      "title": "Hold my bear",
-      "icon": "beer-outline",
-      "color": "#FF6B6B"
+      "id": "1772361929642",
+      "title": "Food",
+      "icon": "🍕",
+      "color": "#F59E0B"
+    },
+    {
+      "id": "1772361929698",
+      "title": "Transport",
+      "icon": "🚗",
+      "color": "#3B82F6"
+    },
+    {
+      "id": "1772361929850",
+      "title": "Entertainment",
+      "icon": "🎬",
+      "color": "#EF4444"
     }
   ],
   "paymentMethods": [

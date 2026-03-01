@@ -637,21 +637,6 @@ export const ExpenseProvider = ({ children }: any) => {
       const newDebt = await res.json();
       dispatch({ type: "ADD_DEBT", payload: newDebt });
 
-      // Link to expenses
-      const expensePayload: Expense = {
-        id: Date.now().toString(),
-        title: debtData.type === "owe" ? `Borrowed from ${debtData.person}` : `Lent to ${debtData.person}`,
-        amount: debtData.originalAmount,
-        category: "Transfer",
-        date: debtData.date,
-        type: debtData.type === "owe" ? "income" : "outcome",
-        payment: "cash",
-        notes: debtData.reason || `Linked to debt with ${debtData.person}`,
-        bank: '',
-        upiApp: ''
-      };
-      await addExpense(expensePayload);
-
       return newDebt;
     } catch (err) {
       console.log("Failed to add debt to server:", err);
