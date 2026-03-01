@@ -7,16 +7,16 @@ import type { Persona } from "../../types/onboarding";
 import { StepWrapper } from "./OnboardingShell";
 
 export const ALL_CATEGORIES = [
-  { icon: "🍕", title: "Food", color: "#F59E0B" },
-  { icon: "🚗", title: "Transport", color: "#3B82F6" },
-  { icon: "🛒", title: "Shopping", color: "#EC4899" },
-  { icon: "🏠", title: "Rent", color: "#2DD4BF" },
-  { icon: "💊", title: "Health", color: "#22C55E" },
-  { icon: "🎬", title: "Entertainment", color: "#EF4444" },
-  { icon: "📚", title: "Education", color: "#06B6D4" },
-  { icon: "💡", title: "Bills", color: "#F97316" },
-  { icon: "☕", title: "Coffee", color: "#92400E" },
-  { icon: "✈️", title: "Travel", color: "#6366F1" },
+  { icon: "fast-food", title: "Food", color: "#F59E0B" },
+  { icon: "car", title: "Transport", color: "#3B82F6" },
+  { icon: "cart", title: "Shopping", color: "#EC4899" },
+  { icon: "home", title: "Rent", color: "#2DD4BF" },
+  { icon: "medkit", title: "Health", color: "#22C55E" },
+  { icon: "film", title: "Entertainment", color: "#EF4444" },
+  { icon: "school", title: "Education", color: "#06B6D4" },
+  { icon: "receipt", title: "Bills", color: "#F97316" },
+  { icon: "cafe", title: "Coffee", color: "#92400E" },
+  { icon: "airplane", title: "Travel", color: "#6366F1" },
 ];
 
 const DEFAULTS_BY_PERSONA: Record<string, string[]> = {
@@ -126,7 +126,7 @@ function CategoryCard({
           </View>
         )}
         <View style={[styles.catIcon, { backgroundColor: color + "18" }]}>
-          <Text style={{ fontSize: 18 }}>{icon}</Text>
+          <Ionicons name={icon as any} size={20} color={color} />
         </View>
         <Text style={styles.catTitle}>{title}</Text>
       </TouchableOpacity>

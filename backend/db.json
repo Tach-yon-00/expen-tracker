@@ -1,6 +1,6 @@
 {
   "cashBalance": 0,
-  "upiBalance": 0,
+  "upiBalance": 1999,
   "monthlyBudget": 5000,
   "user": {
     "name": "Yochan",
@@ -71,19 +71,19 @@
     {
       "id": "1772361929642",
       "title": "Food",
-      "icon": "🍕",
+      "icon": "fast-food",
       "color": "#F59E0B"
     },
     {
       "id": "1772361929698",
       "title": "Transport",
-      "icon": "🚗",
+      "icon": "car",
       "color": "#3B82F6"
     },
     {
       "id": "1772361929850",
       "title": "Entertainment",
-      "icon": "🎬",
+      "icon": "film",
       "color": "#EF4444"
     }
   ],
@@ -138,46 +138,5 @@
       "icon": "wallet-outline"
     }
   ],
-  "debts": [
-    {
-      "id": "1772349480005",
-      "type": "owe",
-      "person": "John",
-      "originalAmount": 50,
-      "remainingAmount": 50,
-      "reason": "",
-      "date": "2026-03-01",
-      "status": "unsettled"
-    },
-    {
-      "id": "1772349528016",
-      "type": "owe",
-      "person": "TERER",
-      "originalAmount": 8000,
-      "remainingAmount": 8000,
-      "reason": "DINNER",
-      "date": "2026-03-01",
-      "status": "unsettled"
-    },
-    {
-      "id": "1772349551226",
-      "type": "receive",
-      "person": "siNNER",
-      "originalAmount": 1000,
-      "remainingAmount": 1000,
-      "reason": "CAb",
-      "date": "2026-03-01",
-      "status": "unsettled"
-    },
-    {
-      "id": "1772349564542",
-      "type": "receive",
-      "person": "WERY",
-      "originalAmount": 8520,
-      "remainingAmount": 8520,
-      "reason": "VGH",
-      "date": "2026-03-01",
-      "status": "unsettled"
-    }
-  ]
+  "debts": []
 }

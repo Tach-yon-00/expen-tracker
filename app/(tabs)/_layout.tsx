@@ -121,6 +121,7 @@ function CustomTabBar() {
   const tabs = [
     { name: "/", label: "Home", icon: "home-outline" },
     { name: "/transactions", label: "Transactions", icon: "wallet-outline" },
+    { name: "/store", label: "Store", icon: "storefront-outline" },
     { name: "/analytics", label: "Analytics", icon: "bar-chart-outline" },
     { name: "/profile", label: "Profile", icon: "person-outline" },
   ];

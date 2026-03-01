@@ -1,5 +1,5 @@
 import { Expense } from "../types/expense";
-import { SERVER_URL, AUTH_HEADERS } from "./config";
+import { AUTH_HEADERS, SERVER_URL } from "./config";
 
 const SERVER = SERVER_URL;
 
@@ -131,3 +131,16 @@ export async function addDemoData(): Promise<void> {
     console.log("Failed to add demo data:", err);
   }
 }
+
+export const ALL_CATEGORIES = [
+  { icon: "fast-food", title: "Food", color: "#F59E0B" },
+  { icon: "car", title: "Transport", color: "#3B82F6" },
+  { icon: "cart", title: "Shopping", color: "#EC4899" },
+  { icon: "home", title: "Rent", color: "#2DD4BF" },
+  { icon: "medkit", title: "Health", color: "#22C55E" },
+  { icon: "film", title: "Entertainment", color: "#EF4444" },
+  { icon: "school", title: "Education", color: "#06B6D4" },
+  { icon: "receipt", title: "Bills", color: "#F97316" },
+  { icon: "cafe", title: "Coffee", color: "#92400E" },
+  { icon: "airplane", title: "Travel", color: "#6366F1" },
+];

@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { BudgetStep } from "../components/onboarding/BudgetStep";
-import { ALL_CATEGORIES, CategoriesStep } from "../components/onboarding/CategoriesStep";
+import { CategoriesStep } from "../components/onboarding/CategoriesStep";
 import { CurrencyStep } from "../components/onboarding/CurrencyStep";
 import { ProgressBar } from "../components/onboarding/OnboardingShell";
 import { PersonaStep } from "../components/onboarding/PersonaStep";
@@ -14,6 +14,7 @@ import { COLORS } from "../constants/theme";
 import { useExpenses } from "../context/ExpenseContext";
 import { setOnboardingDone } from "../storage/onboarding";
 import type { OnboardingData, Persona } from "../types/onboarding";
+import { ALL_CATEGORIES } from "../utils/demoData";
 
 const TOTAL_STEPS = 6;
 const PROFILE_KEY = "SPENDWISE_PROFILE";

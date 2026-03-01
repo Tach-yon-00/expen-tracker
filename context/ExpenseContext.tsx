@@ -413,6 +413,8 @@ export const ExpenseProvider = ({ children }: any) => {
   };
 
   const updateExpense = async (expense: Expense) => {
+    const oldExpense = state.expenses.find(e => e.id === expense.id);
+
     try {
       const res = await fetch(`${SERVER}/expenses/${expense.id}`, {
         method: "PUT",
@@ -421,24 +423,178 @@ export const ExpenseProvider = ({ children }: any) => {
       });
       const updatedExpense = await res.json();
       dispatch({ type: "UPDATE", payload: updatedExpense });
+
+      // Adjust balances
+      if (oldExpense && updatedExpense && (oldExpense.type === "income" || oldExpense.type === "outcome" || updatedExpense.type === "income" || updatedExpense.type === "outcome")) {
+        const currentCashBalance = state.cashBalance || 0;
+        const currentUpiBalance = state.upiBalance || 0;
+
+        let newCashBalance = currentCashBalance;
+        let newUpiBalance = currentUpiBalance;
+
+        // Revert old effect
+        if (oldExpense.type === "income") {
+          const payment = (oldExpense.payment || "").toLowerCase();
+          if (payment === "cash") newCashBalance -= oldExpense.amount;
+          else if (payment === "netbanking") newUpiBalance -= oldExpense.amount;
+        } else if (oldExpense.type === "outcome") {
+          const payment = (oldExpense.payment || "").toLowerCase();
+          if (payment === "cash") newCashBalance += oldExpense.amount;
+          else if (payment === "upi" || payment === "net banking") newUpiBalance += oldExpense.amount;
+        }
+
+        // Apply new effect
+        if (updatedExpense.type === "income") {
+          const payment = (updatedExpense.payment || "").toLowerCase();
+          if (payment === "cash") newCashBalance += updatedExpense.amount;
+          else if (payment === "netbanking") newUpiBalance += updatedExpense.amount;
+        } else if (updatedExpense.type === "outcome") {
+          const payment = (updatedExpense.payment || "").toLowerCase();
+          if (payment === "cash") newCashBalance -= updatedExpense.amount;
+          else if (payment === "upi" || payment === "net banking") newUpiBalance -= updatedExpense.amount;
+        }
+
+        // Ensure non-negative balances
+        newCashBalance = Math.max(0, newCashBalance);
+        newUpiBalance = Math.max(0, newUpiBalance);
+
+        try {
+          await fetch(`${SERVER}/balances`, {
+            method: "PUT",
+            headers: AUTH_HEADERS,
+            body: JSON.stringify({ cashBalance: newCashBalance, upiBalance: newUpiBalance })
+          });
+        } catch (balanceErr) {
+          console.log("Failed to update balance on server:", balanceErr);
+        }
+
+        dispatch({ type: "SET_BALANCES", payload: { cashBalance: newCashBalance, upiBalance: newUpiBalance } });
+      }
+
       return updatedExpense;
     } catch (err) {
       console.log("Failed to update expense on server:", err);
       dispatch({ type: "UPDATE", payload: expense });
+
+      // Optimistic Offline adjustment
+      if (oldExpense && expense && (oldExpense.type === "income" || oldExpense.type === "outcome" || expense.type === "income" || expense.type === "outcome")) {
+        const currentCashBalance = state.cashBalance || 0;
+        const currentUpiBalance = state.upiBalance || 0;
+
+        let newCashBalance = currentCashBalance;
+        let newUpiBalance = currentUpiBalance;
+
+        // Revert old effect
+        if (oldExpense.type === "income") {
+          const payment = (oldExpense.payment || "").toLowerCase();
+          if (payment === "cash") newCashBalance -= oldExpense.amount;
+          else if (payment === "netbanking") newUpiBalance -= oldExpense.amount;
+        } else if (oldExpense.type === "outcome") {
+          const payment = (oldExpense.payment || "").toLowerCase();
+          if (payment === "cash") newCashBalance += oldExpense.amount;
+          else if (payment === "upi" || payment === "net banking") newUpiBalance += oldExpense.amount;
+        }
+
+        // Apply new effect
+        if (expense.type === "income") {
+          const payment = (expense.payment || "").toLowerCase();
+          if (payment === "cash") newCashBalance += expense.amount;
+          else if (payment === "netbanking") newUpiBalance += expense.amount;
+        } else if (expense.type === "outcome") {
+          const payment = (expense.payment || "").toLowerCase();
+          if (payment === "cash") newCashBalance -= expense.amount;
+          else if (payment === "upi" || payment === "net banking") newUpiBalance -= expense.amount;
+        }
+
+        // Ensure non-negative balances
+        newCashBalance = Math.max(0, newCashBalance);
+        newUpiBalance = Math.max(0, newUpiBalance);
+
+        dispatch({ type: "SET_BALANCES", payload: { cashBalance: newCashBalance, upiBalance: newUpiBalance } });
+      }
+
       return expense;
     }
   };
 
   const deleteExpense = async (id: string) => {
+    // Find the expense to delete so we can revert balances
+    const expenseToDelete = state.expenses.find(e => e.id === id);
+
     try {
       await fetch(`${SERVER}/expenses/${id}`, {
         method: "DELETE",
         headers: AUTH_HEADERS,
       });
       dispatch({ type: "DELETE", payload: id });
+
+      if (expenseToDelete && (expenseToDelete.type === "income" || expenseToDelete.type === "outcome")) {
+        const currentCashBalance = state.cashBalance || 0;
+        const currentUpiBalance = state.upiBalance || 0;
+
+        let newCashBalance = currentCashBalance;
+        let newUpiBalance = currentUpiBalance;
+
+        if (expenseToDelete.type === "income") {
+          // Revert income → subtract from balance
+          const payment = (expenseToDelete.payment || "").toLowerCase();
+          if (payment === "cash") {
+            newCashBalance = Math.max(0, currentCashBalance - expenseToDelete.amount);
+          } else if (payment === "netbanking") {
+            newUpiBalance = Math.max(0, currentUpiBalance - expenseToDelete.amount);
+          }
+        } else if (expenseToDelete.type === "outcome") {
+          // Revert expense → add to balance
+          const payment = (expenseToDelete.payment || "").toLowerCase();
+          if (payment === "cash") {
+            newCashBalance = currentCashBalance + expenseToDelete.amount;
+          } else if (payment === "upi" || payment === "net banking") {
+            newUpiBalance = currentUpiBalance + expenseToDelete.amount;
+          }
+        }
+
+        try {
+          await fetch(`${SERVER}/balances`, {
+            method: "PUT",
+            headers: AUTH_HEADERS,
+            body: JSON.stringify({ cashBalance: newCashBalance, upiBalance: newUpiBalance })
+          });
+        } catch (balanceErr) {
+          console.log("Failed to update balance on server:", balanceErr);
+        }
+
+        dispatch({ type: "SET_BALANCES", payload: { cashBalance: newCashBalance, upiBalance: newUpiBalance } });
+      }
     } catch (err) {
       console.log("Failed to delete expense from server:", err);
       dispatch({ type: "DELETE", payload: id });
+
+      // Handle offline revert
+      if (expenseToDelete && (expenseToDelete.type === "income" || expenseToDelete.type === "outcome")) {
+        const currentCashBalance = state.cashBalance || 0;
+        const currentUpiBalance = state.upiBalance || 0;
+
+        let newCashBalance = currentCashBalance;
+        let newUpiBalance = currentUpiBalance;
+
+        if (expenseToDelete.type === "income") {
+          const payment = (expenseToDelete.payment || "").toLowerCase();
+          if (payment === "cash") {
+            newCashBalance = Math.max(0, currentCashBalance - expenseToDelete.amount);
+          } else if (payment === "netbanking") {
+            newUpiBalance = Math.max(0, currentUpiBalance - expenseToDelete.amount);
+          }
+        } else if (expenseToDelete.type === "outcome") {
+          const payment = (expenseToDelete.payment || "").toLowerCase();
+          if (payment === "cash") {
+            newCashBalance = currentCashBalance + expenseToDelete.amount;
+          } else if (payment === "upi" || payment === "net banking") {
+            newUpiBalance = currentUpiBalance + expenseToDelete.amount;
+          }
+        }
+
+        dispatch({ type: "SET_BALANCES", payload: { cashBalance: newCashBalance, upiBalance: newUpiBalance } });
+      }
     }
   };
 

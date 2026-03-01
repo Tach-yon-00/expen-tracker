@@ -47,12 +47,12 @@ export default function TransactionsScreen() {
 
   // Get categories list from state.categories (synced with server db)
   const categories = useMemo(() => {
-    return (state.categories || []).map((cat: any) => cat.title);
+    return Array.from(new Set((state.categories || []).map((cat: any) => cat.title)));
   }, [state.categories]);
 
   // Keywords for filtering (from available categories in db)
   const keywords = useMemo(() => {
-    return (state.categories || []).map((cat: any) => cat.title);
+    return Array.from(new Set((state.categories || []).map((cat: any) => cat.title)));
   }, [state.categories]);
 
   // Build payment methods from database (paymentMethods + banks + upiApps)
@@ -69,7 +69,7 @@ export default function TransactionsScreen() {
     if (methods.length === 0) {
       return ["UPI", "Credit Card", "Debit Card", "Cash", "Net Banking"];
     }
-    return methods;
+    return Array.from(new Set(methods));
   }, [state.paymentMethods, state.banks, state.upiApps]);
 
 
